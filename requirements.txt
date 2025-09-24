@@ -2,5 +2,4 @@ snowflake-snowpark-python
 streamlit
 pandas
 matplotlib
-time
 random
