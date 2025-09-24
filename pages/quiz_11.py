@@ -54,7 +54,7 @@ for i in range (5):
     latex_str += str(num) + '| = '
 
     if res < 0:
-        res = num * (-1)
+        res = res * (-1)
 
     res = str(res)
     preguntas.append(latex_str)
