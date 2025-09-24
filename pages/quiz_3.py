@@ -129,7 +129,7 @@ if logrado:
         st.write(f"Felicidades por contestar todo bien. Obtienes", info[2], "punto(s) adicional.")
         pts += info[2]
     
-    pts = int((pts * 0.7) + (pts * 0.3 * info[2])) #1 - 6, 1 - 8, 1 - 11, 1 - 13, 2 - 16   
+    pts = int((pts * 0.7) + (pts * 0.3 * info[2]) + 0.1) #1 - 6, 1 - 8, 1 - 11, 1 - 13, 2 - 16   
     std_ac = std_info[3] + pts 
     std_tot = std_info[4] + pts
     
