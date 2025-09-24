@@ -1,0 +1,309 @@
+#Reutilizable
+import streamlit as st
+import random
+import time 
+from snowflake.snowpark.context import get_active_session
+from snowflake.snowpark.functions import col
+
+if "mat" in st.session_state:
+    mat = st.session_state["mat"]
+else:
+    st.switch_page("streamlit_app.py")
+
+#st.write(st.session_state.tema)
+cnx = st.connection("snowflake")
+session = cnx.session()
+info = session.table("primeroc.public.subjects").filter(col('id_tema')==st.session_state.tema).collect()[0]
+st.title(info[1])
+st.write("Dificultad:", info[2])
+
+new_seed = random.randint(1, 10000)
+
+random.seed(st.session_state.s_seed)
+
+# Initialize session state variable
+if 'button_disabled' not in st.session_state:
+    st.session_state.button_disabled = False
+
+# Callback function to disable the button
+def disable_button():
+    st.session_state.button_disabled = True
+
+preguntas = []
+respuestas = []
+
+def resuelve_par(expresion):
+  expresion.replace("  ", " ")
+  x = expresion.rfind('(')
+  res = expresion
+
+  if x > -1:
+    res = expresion[x + 1:]
+    y = res.find(')')
+    res = res[:y]
+
+  aux = ''
+  while res != aux:
+    aux = res
+    res = resuelve_exp(res)
+    res = res.replace("  ", " ")
+
+  aux = ''
+  while res != aux:
+    aux = res
+    res = resuelve_mul_div(res)
+    res = res.replace("  ", " ")
+
+  aux = ''
+  while res != aux:
+    aux = res
+    res = resuelve_sum_res(res)
+    res = res.replace("  ", " ")
+
+  if x == -1:
+    expresion = res
+  else:
+    expresion = expresion[:x] + res + expresion[y + x + 2:]
+
+  return expresion.replace("  ", " ")
+
+def resuelve_exp(expresion):
+  x = expresion.find('^')
+  if x > -1:
+    espacio_previo = expresion.rfind(' ', 0, x - 1)
+    espacio_posterior = expresion.find(' ', x + 2)
+
+    expresion = expresion[:espacio_previo] + ' ' + str(round(float(expresion[espacio_previo:x-1]) ** float(expresion[x+2:espacio_posterior]), 2)) + expresion[espacio_posterior:]
+
+  return expresion
+
+def resuelve_mul_div(expresion):
+  x = expresion.find('*')
+  y = expresion.find('/')
+
+  if (x < y or y < 0) and x > -1:
+    espacio_previo = expresion.rfind(' ', 0, x - 1)
+    espacio_posterior = expresion.find(' ', x + 2)
+    expresion = expresion[:espacio_previo + 1] + str(round(float(expresion[espacio_previo:x-1]) * float(expresion[x+2:espacio_posterior]), 2)) + expresion[espacio_posterior:]
+  elif y > -1:
+    espacio_previo = expresion.rfind(' ', 0, y - 1)
+    espacio_posterior = expresion.find(' ', y + 2)
+    expresion = expresion[:espacio_previo + 1] + str(round(float(expresion[espacio_previo:y-1]) / float(expresion[y+2:espacio_posterior]), 2)) + expresion[espacio_posterior:]
+
+  return expresion
+
+def resuelve_sum_res(expresion):
+  x = expresion.find('+')
+  y = expresion.find('-', 2)
+
+  if (x < y or y <= 1) and x > -1:
+    espacio_previo = expresion.rfind(' ', 0, x - 1)
+    espacio_posterior = expresion.find(' ', x + 2)
+    expresion = expresion[:espacio_previo + 1] + str(round(float(expresion[espacio_previo:x-1]) + float(expresion[x+2:espacio_posterior]), 2)) + expresion[espacio_posterior:]
+  elif y > -1:
+    try:
+      espacio_previo = expresion.rfind(' ', 0, y - 1)
+      espacio_posterior = expresion.find(' ', y + 2)
+      expresion = expresion[:espacio_previo + 1] + str(round(float(expresion[espacio_previo:y-1]) - float(expresion[y+2:espacio_posterior]), 2)) + expresion[espacio_posterior:]
+    except:
+      return expresion
+
+  return expresion
+
+for i in range (5):
+    #Fin
+
+    num = random.randint(1, 5 + i)
+
+    latex_str = str(num)
+    expresion = ' ' + str(num)
+
+    tot_op = 2
+    opened = 0
+    its = 3
+    j = 0
+    while j < its:
+        operador = random.choice(['+', '+', '-', '/', '*', '^', '(', '(', ')', ')', 'skip'])
+        
+        if operador == 'skip':
+            continue
+            
+        elif operador == '/':
+            num = random.randint(-3 - i, 3 + i + j)
+            if num == 0:
+                num = 1
+            latex_str += '\div' + str(num)
+            expresion += ' ' + operador + ' ' + str(num)
+
+        elif operador == '^':
+            num = random.randint(1, 3)
+            latex_str += operador + str(num) + '+' + str(num)
+            expresion += ' ' + operador + ' ' + str(num) + ' + ' + str(num)
+            j += 1
+        
+        elif operador == '(':
+            if tot_op > 0:
+                tot_op -= 1
+                its += 1
+                opened += 1
+                prev_op = random.choice(['+', '+', '-', '-', '/', '*'])
+                num = random.randint(-3 - i, 3 + i + j)
+                if prev_op == '/':
+                    latex_str += '\div'
+        
+                else:
+                    latex_str += prev_op
+                latex_str += '(' + str(num)    
+                expresion += ' ' + prev_op + ' ' + operador + ' ' + str(num)
+                
+        elif operador == ')':
+            its += 1
+            if opened > 0:
+                opened -= 1
+                latex_str += ')'
+                expresion += ' ' + operador
+        else:
+            num = random.randint(1, 5 + i + j)
+            latex_str += operador + str(num)
+            expresion += ' ' + operador + ' ' + str(num)
+
+        j += 1
+
+    for j in range (opened):
+        opened -= 1
+        latex_str += ')'
+        expresion += ' )'
+
+    expresion += ' '
+    aux = ''
+
+    while expresion != aux:
+        aux = expresion
+        expresion = resuelve_par(expresion)
+
+    preguntas.append(latex_str)
+    respuestas.append(float(expresion.replace(" ", "")))
+    
+#Reutilizable
+with st.form("my_form"):
+    #Pregunta 1
+    st.latex(preguntas[0])
+    res_est0 = st.text_input("1. Ingresa tu respuesta:")
+
+    if res_est0:
+        try:
+            res_est0 = float(res_est0)
+        except:
+            st.warning('Ingresa un numero válido')
+
+    #Pregunta 2
+    st.latex(preguntas[1])
+    res_est1 = st.text_input("2. Ingresa tu respuesta:")
+    if res_est1:
+        try:
+            res_est1 = float(res_est1)
+        except:
+            st.warning('Ingresa un numero válido')
+
+    #Pregunta 3
+    st.latex(preguntas[2])
+    res_est2 = st.text_input("3. Ingresa tu respuesta:")
+    if res_est2:
+        try:
+            res_est2 = float(res_est2)
+        except:
+            st.warning('Ingresa un numero válido')
+    
+    #Pregunta 4
+    st.latex(preguntas[3])
+    res_est3 = st.text_input("4. Ingresa tu respuesta:")
+    if res_est3:
+        try:
+            res_est3 = float(res_est3)
+        except:
+            st.warning('Ingresa un numero válido')
+
+    #Pregunta 5
+    st.latex(preguntas[4])
+    res_est4 = st.text_input("5. Ingresa tu respuesta:")
+    if res_est4:
+        try:
+            res_est4 = float(res_est4)
+        except:
+            st.warning('Ingresa un numero válido')
+    
+    logrado = st.form_submit_button('Confirmar respuestas', on_click=disable_button, disabled=st.session_state.button_disabled)
+
+#Reutilizable
+if logrado:
+    pts = 0
+    
+    #Respuesta 0
+    if respuestas[0] == res_est0:
+        st.success("1. Bravooo")
+        pts += 1
+    else:
+        mensaje_error = "1. La respuesta era: " + str(respuestas[0])
+        st.warning(mensaje_error)
+    
+    time.sleep(0.8)
+    #Respuesta 1
+    if respuestas[1] == res_est1:
+        st.success("2. Bravooo")
+        pts += 1
+    else:
+        mensaje_error = "2. La respuesta era: " + str(respuestas[1])
+        st.warning(mensaje_error)
+        
+    time.sleep(0.8)
+    #Respuesta 2
+    if respuestas[2] == res_est2:
+        st.success("3. Bravooo")
+        pts += 1
+    else:
+        mensaje_error = "3. La respuesta era: " + str(respuestas[2])
+        st.warning(mensaje_error)
+    
+    time.sleep(0.8)
+    #Respuesta 3
+    if respuestas[3] == res_est3:
+        st.success("4. Bravooo")
+        pts += 1
+    else:
+        mensaje_error = "4. La respuesta era: " + str(respuestas[3])
+        st.warning(mensaje_error)
+    
+    time.sleep(0.8)
+    #Respuesta 4
+    if respuestas[4] == res_est4:
+        st.success("5. Bravooo")
+        pts += 1
+    else:
+        mensaje_error = "5. La respuesta era: " + str(respuestas[4])
+        st.warning(mensaje_error)
+
+    std_info = session.table("primeroc.public.students").filter(col('matricula')==st.session_state.mat).collect()[0]
+
+    if pts == 5:
+        st.write(f"Felicidades por contestar todo bien. Obtienes", info[2], "punto(s) adicional.")
+        pts += info[2]
+    
+    pts = int((pts * 0.7) + (pts * 0.3 * info[2])) #1 - 6, 1 - 8, 1 - 11, 1 - 13, 2 - 16   
+    std_ac = std_info[3] + pts 
+    std_tot = std_info[4] + pts
+    
+    st.write("En esta práctica, obtuviste: **" + str(pts) + "pts.**")
+    st.write("Puntos actuales: " + str(std_tot) + "pts.")
+    
+    my_insert_stmt = """update students
+    set puntos_act = """ + str(std_ac) + """, puntos_tot = """ + str(std_tot) + """
+    WHERE matricula = """ + mat
+    session.sql(my_insert_stmt).collect()
+
+regresar = st.button("Volver a inicio")
+if regresar:
+    st.session_state.s_seed = new_seed
+    st.session_state.button_disabled = False
+    st.switch_page("pages/inicio.py")
+#Fin
+    
