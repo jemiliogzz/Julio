@@ -49,15 +49,9 @@ for i in range (5):
         num2 = 1
     if res == 0:
         res = 1
-
-    op = random.choice(['t', 't', 'b'])
-
-    if op == 'b':
-        latex_str = r'\frac {' + str(num) + '}{x}'
-        fin = num / res
-    else:
-        latex_str = r'\frac{x}{' + str(num) + '}'
-        fin = res / num
+    
+    latex_str = r'\frac{x}{' + str(num) + '}'
+    fin = res / num
 
     if op2 == '+':
         fin += num2
@@ -83,11 +77,9 @@ for i in range (5):
 
     latex_str += op2 + str(num) + '}{' + str(num2) + '}' + op + str(fin)
     
-
     preguntas.append(latex_str)
     respuestas.append(str(res))
     
-
 #Reutilizable
 with st.form("my_form"):
     #Pregunta 1
