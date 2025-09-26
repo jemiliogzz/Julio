@@ -10,7 +10,12 @@ if "mat" in st.session_state:
 else:
     st.switch_page("streamlit_app.py")
 
-st.warning("REDONDEAR LA RESPUESTA AL ENTERO MÁS CERCANO")
+st.warning("ACTIVIDAD EN MANTENIMIENTO")
+time.sleep(0.8)
+st.warning("ACTIVIDAD EN MANTENIMIENTO")
+time.sleep(0.8)
+st.warning("ACTIVIDAD EN MANTENIMIENTO")
+time.sleep(0.8)
 
 #st.write(st.session_state.tema)
 cnx = st.connection("snowflake")
@@ -60,16 +65,25 @@ for i in range (5):
         if op == 'b':
             latex_str = r'\frac {' + str(num) + '}{x}'
             fin = num / res
+            
+            if op2 == '+':
+                num += num2 * res
+            else:
+                num -= num2 * res
+                
+            str_fin = r'\frac{' + str(num) + '}{' + str(res) + '}'
         else:
             latex_str = r'\frac{x}{' + str(num) + '}'
             fin = res / num
 
-    if op2 == '+':
-        fin += num2
-    else:
-        fin -= num2
+            if op2 == '+':
+                res_aux += num2 * res
+            else:
+                res_aux -= num2 * res
+            
+            str_fin = r'\frac{' + str(res_aux) + '}{' + str(num) + '}'
 
-    latex_str += op2 + str(num2) + '=' + str(fin)
+    latex_str += op2 + str(num2) + '=' + str_fin
 
     preguntas.append(latex_str)
     respuestas.append(str(res))
