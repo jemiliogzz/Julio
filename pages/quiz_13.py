@@ -49,6 +49,11 @@ for i in range (5):
     num1 = random.randint(-3 - i, 3 + i)
     res = random.randint(-5 - i, 5 + i)
 
+    if num1 == 0:
+        num1 = 1
+    if res == 0:
+        res = 1
+        
     if path == '*':
         latex_str = str(num1) + 'x'
         fin = res * num1
@@ -61,6 +66,8 @@ for i in range (5):
         fin = num1
 
     num1 = random.randint(-3 - i, 3 + i)
+    if num1 == 0:
+        num1 = 1
     path = random.choice(['+', '-'])
 
     if path == '+':
