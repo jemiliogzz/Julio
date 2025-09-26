@@ -10,14 +10,14 @@ if "mat" in st.session_state:
 else:
     st.switch_page("streamlit_app.py")
 
-if mat != '112233':
-    st.warning("ACTIVIDAD EN MANTENIMIENTO")
-    time.sleep(1)
-    st.warning("ACTIVIDAD EN MANTENIMIENTO")
-    time.sleep(1)
-    st.warning("ACTIVIDAD EN MANTENIMIENTO")
-    time.sleep(1)
-    st.switch_page("pages/inicio.py")
+# if mat != '112233':
+#     st.warning("ACTIVIDAD EN MANTENIMIENTO")
+#     time.sleep(1)
+#     st.warning("ACTIVIDAD EN MANTENIMIENTO")
+#     time.sleep(1)
+#     st.warning("ACTIVIDAD EN MANTENIMIENTO")
+#     time.sleep(1)
+#     st.switch_page("pages/inicio.py")
 
 #st.write(st.session_state.tema)
 cnx = st.connection("snowflake")
