@@ -50,7 +50,7 @@ for i in range (5):
     res = random.randint(-5 - i, 5 + i)
 
     if path == '*':
-        latex_str = str(num) + 'x'
+        latex_str = str(num1) + 'x'
         fin = res * num1
     elif path == 't':
         fin = res
