@@ -85,10 +85,9 @@ for i in range (5):
             
             str_fin = r'\frac{' + str(res_aux) + '}{' + str(num) + '}'
 
-    st.write(str_fin)
-    
     latex_str += op2 + str(num2) + '=' + str_fin
 
+    st.write(res)
     preguntas.append(latex_str)
     respuestas.append(str(res))
     
