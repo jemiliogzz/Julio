@@ -12,11 +12,11 @@ else:
 
 if mat != '112233':
     st.warning("ACTIVIDAD EN MANTENIMIENTO")
-    time.sleep(0.8)
+    time.sleep(1)
     st.warning("ACTIVIDAD EN MANTENIMIENTO")
-    time.sleep(0.8)
+    time.sleep(1)
     st.warning("ACTIVIDAD EN MANTENIMIENTO")
-    time.sleep(0.8)
+    time.sleep(1)
     st.switch_page("pages/inicio.py")
 
 #st.write(st.session_state.tema)
