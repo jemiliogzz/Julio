@@ -44,50 +44,32 @@ respuestas = []
 for i in range (5):
     #Fin
 
-    op = random.choice(['*', '\div'])
-    op2 = random.choice(['+', '-'])
+    path = random.choice(['*', 't', 'b'])
 
-    num = random.randint(-6 - i, 6 + i)
-    num2 = random.randint(-8 - i, 8 + 1)
-    res = random.randint(-2 - i, 2 + i)
+    num1 = random.randint(-3 - i, 3 + i)
+    res = random.randint(-5 - i, 5 + i)
 
-    if num == 0:
-        num = 1
-    if num2 == 0:
-        num2 = 1
-    if res == 0:
-        res = 1
-
-    if op == '*':
+    if path == '*':
         latex_str = str(num) + 'x'
-        str_fin = str(num * res)
+        fin = res * num1
+    elif path == 't':
+        fin = res
+        res = num1 * fin
+        latex_str = r'\frac{x}{' + str(num1) + '}'
     else:
-        op = random.choice(['t', 't', 'b'])
+        latex_str = r'\frac{' + str(num1 * res) + '}{x}'
+        fin = num1
 
-        if op == 'b':
-            latex_str = r'\frac {' + str(num) + '}{x}'
-            fin = num / res
-            
-            if op2 == '+':
-                num = num + (num2 * res)
-            else:
-                num = num - (num2 * res)
-                
-            str_fin = r'\frac{' + str(num) + '}{' + str(res) + '}'
-        else:
-            latex_str = r'\frac{x}{' + str(num) + '}'
-            fin = res / num
+    num1 = random.randint(-3 - i, 3 + i)
+    path = random.choice(['+', '-'])
 
-            if op2 == '+':
-                res_aux = res + num2 * res
-            else:
-                res_aux = res - num2 * res
-            
-            str_fin = r'\frac{' + str(res_aux) + '}{' + str(num) + '}'
+    if path == '+':
+        fin += num1
+    else:
+        fin -= num1
 
-    latex_str += op2 + str(num2) + '=' + str_fin
-
-    st.write(res)
+    latex_str += path + str(num1) + '=' + str(fin)
+        
     preguntas.append(latex_str)
     respuestas.append(str(res))
     
