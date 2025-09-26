@@ -58,7 +58,7 @@ for i in range (5):
 
     if op == '*':
         latex_str = str(num) + 'x'
-        fin = num * res
+        str_fin = str(num * res)
     else:
         op = random.choice(['t', 't', 'b'])
 
