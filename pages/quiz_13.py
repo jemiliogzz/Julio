@@ -67,9 +67,9 @@ for i in range (5):
             fin = num / res
             
             if op2 == '+':
-                num += num2 * res
+                num = num + (num2 * res)
             else:
-                num -= num2 * res
+                num = num - (num2 * res)
                 
             str_fin = r'\frac{' + str(num) + '}{' + str(res) + '}'
         else:
@@ -77,9 +77,9 @@ for i in range (5):
             fin = res / num
 
             if op2 == '+':
-                res_aux += num2 * res
+                res_aux = res + num2 * res
             else:
-                res_aux -= num2 * res
+                res_aux = res - num2 * res
             
             str_fin = r'\frac{' + str(res_aux) + '}{' + str(num) + '}'
 
