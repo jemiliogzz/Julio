@@ -73,7 +73,7 @@ for i in range (5):
     num2 = num2 + otro_num2
     
     ec = num1 * den + num2 * res * den
-    fracc = r'\frac{' + str(ec + res) + '+' + str(otro_num2 * den - res) + '}{' + str(den) + '}' 
+    fracc = r'\frac{' + str(ec + res) + '+' + str(otro_num2 * den - res) + 'x}{' + str(den) + '}' 
     latex_str = str(num1) + op + str(num2) + 'x =' + fracc
 
     preguntas.append(latex_str)
