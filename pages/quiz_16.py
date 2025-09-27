@@ -19,14 +19,14 @@ info = session.table("primeroc.public.subjects").filter(col('id_tema')==st.sessi
 st.title(info[1])
 st.write("Dificultad:", info[2])
 
-if mat != '112233':
-    st.warning("ACTIVIDAD EN MANTENIMIENTO")
-    time.sleep(1)
-    st.warning("ACTIVIDAD EN MANTENIMIENTO")
-    time.sleep(1)
-    st.warning("ACTIVIDAD EN MANTENIMIENTO")
-    time.sleep(1)
-    st.switch_page("pages/inicio.py")
+# if mat != '112233':
+#     st.warning("ACTIVIDAD EN MANTENIMIENTO")
+#     time.sleep(1)
+#     st.warning("ACTIVIDAD EN MANTENIMIENTO")
+#     time.sleep(1)
+#     st.warning("ACTIVIDAD EN MANTENIMIENTO")
+#     time.sleep(1)
+#     st.switch_page("pages/inicio.py")
 
 new_seed = random.randint(1, 10000)
 
@@ -77,8 +77,6 @@ for i in range (5):
     cambio = random.randint(1, 3)
     fracc = r'\frac{' + str(ec + res * cambio) + '+' + str(otro_num2 * den - cambio) + 'x}{' + str(den) + '}' 
     latex_str = str(num1) + '+' + str(num2) + 'x =' + fracc
-
-    st.write(res)
 
     preguntas.append(latex_str)
     respuestas.append(str(res))
