@@ -10,8 +10,6 @@ if "mat" in st.session_state:
 else:
     st.switch_page("streamlit_app.py")
 
-st.warning("REDONDEAR LA RESPUESTA AL ENTERO MÁS CERCANO")
-
 #st.write(st.session_state.tema)
 cnx = st.connection("snowflake")
 session = cnx.session()
@@ -58,6 +56,8 @@ for i in range (5):
             if res == 0:
                 res = 1
             fin = random.randint(-3 - i, 3 + i)
+            if fin == 0:
+                fin = 1
             num = fin * res # = y
             latex_str = r'\frac{y}{x}'
         else:
