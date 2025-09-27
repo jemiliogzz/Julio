@@ -68,6 +68,8 @@ for i in range (5):
     #     latex_str = str(num1) + '-' + str(num2) + 'x'
 
     otro_num2 = random.randint(-2 - i, 3 + i)
+    if otro_num2 == 0:
+        otro_num2 = 1
     num2 = num2 + otro_num2
     
     ec = num1 * den + num2 * res * den
