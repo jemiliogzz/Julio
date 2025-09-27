@@ -187,5 +187,14 @@ if regresar:
     st.session_state.s_seed = new_seed
     st.session_state.button_disabled = False
     st.switch_page("pages/inicio.py")
+
+st.write("Si crees que hay un error en esta actividad hazme saber.")
+# with st.form("reporte"):
+#     st.text_input("Añade un comentario")
+
+#     confirmado = st.form_submit_button('Confirmar reporte', on_click=disable_button, disabled=st.session_state.button_disabled)
+
+# if confirmado:
+    
 #Fin
     
