@@ -42,13 +42,8 @@ for i in range (5):
     op2 = random.choice(['+', '-'])
 
     num2 = random.randint(-8 - i, 8 + 1) # = z
-   
-    if num == 0:
-        num = 1
     if num2 == 0:
         num2 = 1
-    if res == 0:
-        res = 1
 
     if op == '*':
         res = random.randint(-2 - i, 2 + i) # = x
@@ -60,11 +55,15 @@ for i in range (5):
 
         if op == 'b':
             res = random.randint(-2 - i, 2 + i) # = x
+            if res == 0:
+                res = 1
             fin = random.randint(-3 - i, 3 + i)
             num = fin * res # = y
             latex_str = r'\frac{y}{x}'
         else:
             num = random.randint(-2 - i, 2 + i) # = y
+            if num == 0:
+                num = 1
             fin = random.randint(-3 - i, 3 + i)
             res = num * fin # = x
             latex_str = r'\frac{x}{y}'
