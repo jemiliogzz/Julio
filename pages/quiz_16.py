@@ -73,7 +73,8 @@ for i in range (5):
     num2 = num2 + otro_num2
     
     ec = num1 * den + num2 * res * den
-    fracc = r'\frac{' + str(ec) + '+' + str(otro_num2 * den) + 'x}{' + str(den) + '}' 
+    cambio = random.randint(1, 3)
+    fracc = r'\frac{' + str(ec + res * cambio) + '+' + str(otro_num2 * den - cambio) + 'x}{' + str(den) + '}' 
     latex_str = str(num1) + '+' + str(num2) + 'x =' + fracc
 
     st.write(res)
