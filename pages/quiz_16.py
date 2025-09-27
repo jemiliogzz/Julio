@@ -19,6 +19,15 @@ info = session.table("primeroc.public.subjects").filter(col('id_tema')==st.sessi
 st.title(info[1])
 st.write("Dificultad:", info[2])
 
+if mat != '112233':
+    st.warning("ACTIVIDAD EN MANTENIMIENTO")
+    time.sleep(1)
+    st.warning("ACTIVIDAD EN MANTENIMIENTO")
+    time.sleep(1)
+    st.warning("ACTIVIDAD EN MANTENIMIENTO")
+    time.sleep(1)
+    st.switch_page("pages/inicio.py")
+
 new_seed = random.randint(1, 10000)
 
 random.seed(st.session_state.s_seed)
@@ -37,46 +46,36 @@ respuestas = []
 for i in range (5):
     #Fin
 
-    op2 = random.choice(['+', '-'])
+    res = random.randint(-5, 5)
+    num1 = random.randint(-4 - i, 4 + i)
+    num2 = random.randint(-5 - i, 4 + i)
+    den = random.randint(1, 7)
 
-    num = random.randint(-6 - i, 6 + i)
-    num2 = random.randint(-8 - i, 8 + 1)
-    res = random.randint(-2 - i, 2 + i)
-
-    if num == 0:
-        num = 1
-    if num2 == 0:
-        num2 = 1
     if res == 0:
         res = 1
-    
-    latex_str = r'\frac{x}{' + str(num) + '}'
-    fin = res / num
-
-    if op2 == '+':
-        fin += num2
-    else:
-        fin -= num2
-    
-    latex_str += op2 + str(num2) + '=' + r'\frac{x'
-
-    num = random.randint(-6 - i, 6 + i)
-    if num == 0:
-        num = 1
-    num2 = random.randint(-3 - i, 3 + i)
+    if num1 == 0:
+        num1 = 1
     if num2 == 0:
         num2 = 1
-    op2 = random.choice(['+', '-'])
+    if den == 0:
+        den = 1
 
-    op = ''
+    op = random.choice(['+', '-'])
 
-    fin -= (res + num) / num2
+    # if op == '+':
+    #     ec = num1 * den + num2 * res * den
+    #     latex_str = str(num1) + '+' + str(num2) + 'x'
+    # else:
+    #     ec = num1 * den - num2 * res * den
+    #     latex_str = str(num1) + '-' + str(num2) + 'x'
+
+    otro_num2 = random.randint(-2 - i, 3 + i)
+    num2 = num2 + otro_num2
     
-    if fin >= 0:
-        op = '+'
+    ec = num1 * den + num2 * res * den
+    fracc = r'\frac{' + str(ec + res) + '+' + str(otro_num2 * den - res) + '}{' + str(den) + '}' 
+    latex_str = str(num1) + op + str(num2) + 'x =' + fracc
 
-    latex_str += op2 + str(num) + '}{' + str(num2) + '}' + op + str(fin)
-    
     preguntas.append(latex_str)
     respuestas.append(str(res))
     
