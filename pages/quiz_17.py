@@ -41,10 +41,8 @@ for i in range (5):
     op = random.choice(['*', '\div'])
     op2 = random.choice(['+', '-'])
 
-    num = random.randint(-6 - i, 6 + i) # = y
     num2 = random.randint(-8 - i, 8 + 1) # = z
-    res = random.randint(-2 - i, 2 + i) # = x
-
+   
     if num == 0:
         num = 1
     if num2 == 0:
@@ -53,17 +51,23 @@ for i in range (5):
         res = 1
 
     if op == '*':
+        res = random.randint(-2 - i, 2 + i) # = x
+        num = random.randint(-3 - i, 3 + i) # = y
         latex_str = 'yx'
         fin = num * res
     else:
         op = random.choice(['t', 't', 'b'])
 
         if op == 'b':
+            res = random.randint(-2 - i, 2 + i) # = x
+            fin = random.randint(-3 - i, 3 + i)
+            num = fin * res # = y
             latex_str = r'\frac{y}{x}'
-            fin = num / res
         else:
+            num = random.randint(-2 - i, 2 + i) # = y
+            fin = random.randint(-3 - i, 3 + i)
+            res = num * fin # = x
             latex_str = r'\frac{x}{y}'
-            fin = res / num
 
     if op2 == '+':
         fin += num2
