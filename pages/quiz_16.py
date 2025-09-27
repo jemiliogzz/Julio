@@ -59,9 +59,7 @@ for i in range (5):
         num2 = 1
     if den == 0:
         den = 1
-
-    op = random.choice(['+', '-'])
-
+        
     # if op == '+':
     #     ec = num1 * den + num2 * res * den
     #     latex_str = str(num1) + '+' + str(num2) + 'x'
@@ -74,7 +72,9 @@ for i in range (5):
     
     ec = num1 * den + num2 * res * den
     fracc = r'\frac{' + str(ec + res) + '+' + str(otro_num2 * den - res) + 'x}{' + str(den) + '}' 
-    latex_str = str(num1) + op + str(num2) + 'x =' + fracc
+    latex_str = str(num1) + '+' + str(num2) + 'x =' + fracc
+
+    st.write(res)
 
     preguntas.append(latex_str)
     respuestas.append(str(res))
