@@ -10,8 +10,6 @@ if "mat" in st.session_state:
 else:
     st.switch_page("streamlit_app.py")
 
-st.warning("REDONDEAR LA RESPUESTA AL ENTERO MÁS CERCANO")
-
 #st.write(st.session_state.tema)
 cnx = st.connection("snowflake")
 session = cnx.session()
