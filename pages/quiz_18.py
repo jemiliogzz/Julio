@@ -389,7 +389,7 @@ if logrado:
     #Respuesta 2
     if respuestas[2] == res_est20:
         st.success("3. Valores de 'y' correctos!")
-        if real3 == res_est3:
+        if real2 == res_est2:
             st.success("3. Bravooo")
             pts += 1
         else:
