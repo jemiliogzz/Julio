@@ -42,7 +42,7 @@ for i in range (5):
     sum = random.randint(-2, 2)
     if sum == 0:
       sum = 1
-    sum = sum * res_pos
+    sum = sum * mul
     fin = res_pos * mul + sum
     latex_str = '|' + str(mul) + 'x'
     if sum > 0:
