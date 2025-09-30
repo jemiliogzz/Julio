@@ -38,7 +38,7 @@ for i in range (5):
     #Fin
 
     res_pos = random.randint(2, 4 + i)
-    mul = random.randint(2, 4 + i)
+    mul = random.randint(3, 4 + i)
     sum = random.randint(-2, 2)
     if sum == 0:
       sum = 1
