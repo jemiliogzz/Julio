@@ -50,7 +50,7 @@ for i in range (5):
 
     latex_str += str(sum) + '|=' + str(fin)
     
-    res_neg = ((fin * -1) - sum) / mul
+    res_neg = int(((fin * -1) - sum) / mul)
 
     preguntas.append(latex_str)
     respuestas.append((str(res_pos), str(res_neg)))
