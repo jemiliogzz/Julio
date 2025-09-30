@@ -53,7 +53,7 @@ for i in range (5):
     res_neg = ((fin * -1) - sum) / mul
 
     preguntas.append(latex_str)
-    respuestas.append((str(res_pos), str(res_neg))
+    respuestas.append((str(res_pos), str(res_neg)))
 
 #Reutilizable
 with st.form("my_form"):
