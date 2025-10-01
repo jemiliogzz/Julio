@@ -59,7 +59,7 @@ for prod in productos:
         if st.button("Comprar", key=f"comprar_{prod.ID_PRODUCTO}"):
             insert_stmt = f"""
                 INSERT INTO PRIMEROC.PUBLIC.BELONGINGS (ID_ESTUDIANTE, ID_PRODUCTO, REDIMIDO)
-                VALUES ({id_estudiante}, {prod.ID_PROCUCTO}, FALSE)
+                VALUES ({id_estudiante}, {prod.ID_PRODUCTO}, FALSE)
             """
             session.sql(insert_stmt).collect()
             st.success(f"Compraste {prod.PRODUCTO} 🎉")
