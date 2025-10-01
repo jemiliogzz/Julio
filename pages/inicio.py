@@ -56,9 +56,9 @@ for prod in productos:
     with col2:
         st.write(f"${prod.PRECIO}")
     with col3:
-        if st.button("Comprar", key=f"comprar_{prod.ID_PRODCUTO}"):
+        if st.button("Comprar", key=f"comprar_{prod.ID_PRODUCTO}"):
             session.table("primeroc.public.belongings") \
-                .insert([ (id_estudiante, prod.ID_PRODCUTO, False) ])
+                .insert([ (id_estudiante, prod.ID_PRODUCTO, False) ])
             st.success(f"Compraste {prod.PRODUCTO} 🎉")
             st.rerun()
 
@@ -71,7 +71,7 @@ bel = session.table("primeroc.public.belongings").alias("b")
 shop = session.table("primeroc.public.shop").alias("s")
 
 inventario = (
-    bel.join(shop, bel["ID_PRODUCTO"] == shop["ID_PRODCUTO"])
+    bel.join(shop, bel["ID_PRODUCTO"] == shop["ID_PRODUCTO"])
        .filter(bel["ID_ESTUDIANTE"] == id_estudiante)
        .select(
            shop["PRODUCTO"].alias("producto"),
