@@ -188,6 +188,12 @@ if logrado:
     WHERE matricula = """ + mat
     session.sql(my_insert_stmt).collect()
 
+    my_insert_stmt = insert_stmt = f"""
+    INSERT INTO PRIMEROC.PUBLIC.DONE_DONE_DONE VALUES
+    ({std_id}, '{st.session_state.tema}', {pts}, CURRENT_TIMESTAMP)
+    """
+    session.sql(my_insert_stmt).collect()
+
 regresar = st.button("Volver a inicio")
 if regresar:
     st.session_state.s_seed = new_seed
