@@ -143,7 +143,8 @@ if logrado:
     std_tot = std_info[4] + pts
     
     st.write("En esta práctica, obtuviste: **" + str(pts) + "pts.**")
-    st.write("Puntos actuales: " + str(std_tot) + "pts.")
+    st.write("Puntos Actuales: " + str(std_ac) + "pts.")
+    st.write("Puntos Totales: " + str(std_tot) + "pts.")
     
     my_insert_stmt = """update students
     set puntos_act = """ + str(std_ac) + """, puntos_tot = """ + str(std_tot) + """
