@@ -162,6 +162,7 @@ if logrado:
     pts = int((pts * 0.7) + (pts * 0.3 * info[2])) #1 - 6, 1 - 8, 1 - 11, 1 - 13, 2 - 16   
     std_ac = std_info[3] + pts 
     std_tot = std_info[4] + pts
+    std_id = std_info[0]
     
     st.write("En esta práctica, obtuviste: **" + str(pts) + "pts.**")
     st.write("Puntos Actuales: " + str(std_ac) + "pts.")
