@@ -38,16 +38,22 @@ if tema_conf:
 # ------------------------------
 st.subheader("Tienda 🛒")
 
-# Buscar el id_estudiante con la matrícula
-id_estudiante = session.table("primeroc.public.students") \
+# Buscar datos del estudiante con la matrícula
+estudiante = session.table("primeroc.public.students") \
     .filter(col("matricula") == mat) \
-    .select(col("id_estudiante")) \
-    .collect()[0][0]
+    .select(col("id_estudiante"), col("puntos_act")) \
+    .collect()[0]
+
+id_estudiante = estudiante.ID_ESTUDIANTE
+puntos_act = estudiante.PUNTOS_ACT
+
+# Mostrar puntos disponibles
+st.markdown(f"### 💰 Tus puntos actuales: **{puntos_act}**")
 
 # Cargar productos ordenados por precio ascendente
 productos = (
     session.table("primeroc.public.shop")
-           .sort(col("PRECIO"))   # 👈 orden ascendente
+           .sort(col("PRECIO"))
            .collect()
 )
 
@@ -59,14 +65,29 @@ for prod in productos:
     with col2:
         st.write(f"${prod.PRECIO}")
     with col3:
-        if st.button("Comprar", key=f"comprar_{prod.ID_PRODUCTO}"):
-            insert_stmt = f"""
-                INSERT INTO PRIMEROC.PUBLIC.BELONGINGS (ID_ESTUDIANTE, ID_PRODUCTO, REDIMIDO)
-                VALUES ({id_estudiante}, {prod.ID_PRODUCTO}, FALSE)
-            """
-            session.sql(insert_stmt).collect()
-            st.success(f"Compraste {prod.PRODUCTO} 🎉")
-            st.rerun()
+        # Verificar si tiene puntos suficientes
+        if puntos_act >= prod.PRECIO:
+            if st.button("Comprar", key=f"comprar_{prod.ID_PRODUCTO}"):
+                # Insertar la compra
+                insert_stmt = f"""
+                    INSERT INTO PRIMEROC.PUBLIC.BELONGINGS (ID_ESTUDIANTE, ID_PRODUCTO, REDIMIDO)
+                    VALUES ({id_estudiante}, {prod.ID_PRODUCTO}, FALSE)
+                """
+                session.sql(insert_stmt).collect()
+
+                # Descontar puntos del estudiante
+                update_stmt = f"""
+                    UPDATE PRIMEROC.PUBLIC.STUDENTS
+                    SET PUNTOS_ACT = PUNTOS_ACT - {prod.PRECIO}
+                    WHERE ID_ESTUDIANTE = {id_estudiante}
+                """
+                session.sql(update_stmt).collect()
+
+                st.success(f"Compraste {prod.PRODUCTO} 🎉")
+                st.rerun()
+        else:
+            st.button("Sin puntos", key=f"nop_{prod.ID_PRODUCTO}", disabled=True)
+
 
 # ------------------------------
 # INVENTARIO DEL ESTUDIANTE
