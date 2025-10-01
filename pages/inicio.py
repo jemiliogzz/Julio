@@ -33,7 +33,6 @@ if tema_conf:
     ubi_quiz = "pages/quiz_" + str(tema_id) + ".py"
     st.switch_page(ubi_quiz)
 
-
 # ------------------------------
 # TIENDA
 # ------------------------------
@@ -45,10 +44,14 @@ id_estudiante = session.table("primeroc.public.students") \
     .select(col("id_estudiante")) \
     .collect()[0][0]
 
-# Cargar productos disponibles
-productos = session.table("primeroc.public.shop").collect()
+# Cargar productos ordenados por precio ascendente
+productos = (
+    session.table("primeroc.public.shop")
+           .sort(col("PRECIO"))   # 👈 orden ascendente
+           .collect()
+)
 
-# Mostrar productos como tabla
+# Mostrar productos como tabla con botón de compra
 for prod in productos:
     col1, col2, col3 = st.columns([3,1,1])
     with col1:
