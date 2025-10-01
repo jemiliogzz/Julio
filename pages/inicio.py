@@ -75,7 +75,7 @@ shop = session.table("primeroc.public.shop").alias("s")
 
 # Productos NO redimidos
 no_redimidos = (
-    bel.join(shop, bel["ID_PRODUCTO"] == shop["ID_PRODCUTO"])
+    bel.join(shop, bel["ID_PRODUCTO"] == shop["ID_PRODUCTO"])
        .filter((bel["ID_ESTUDIANTE"] == id_estudiante) & (bel["REDIMIDO"] == False))
        .select(
            shop["PRODUCTO"].alias("producto"),
@@ -86,7 +86,7 @@ no_redimidos = (
 
 # Productos redimidos
 redimidos = (
-    bel.join(shop, bel["ID_PRODUCTO"] == shop["ID_PRODCUTO"])
+    bel.join(shop, bel["ID_PRODUCTO"] == shop["ID_PRODUCTO"])
        .filter((bel["ID_ESTUDIANTE"] == id_estudiante) & (bel["REDIMIDO"] == True))
        .select(
            shop["PRODUCTO"].alias("producto"),
