@@ -42,7 +42,7 @@ for i in range (5):
             num = 1
         fracs[j] = num
 
-    if operador == '+':
+    if operador == '*':
         res = str(round((fracs[0] / fracs[1]) * (fracs[2] / fracs[3]), 2))
     else:
         res = str(round((fracs[0] / fracs[1]) / (fracs[2] / fracs[3]), 2))
