@@ -149,6 +149,7 @@ if logrado:
     INSERT INTO PRIMEROC.PUBLIC.DONE_DONE_DONE VALUES
     ({std_id}, '{st.session_state.tema}', '{ts}')
     """
+    session.sql(my_insert_stmt).collect()
 
 regresar = st.button("Volver a inicio")
 if regresar:
