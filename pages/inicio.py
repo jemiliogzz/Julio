@@ -56,9 +56,12 @@ for prod in productos:
     with col2:
         st.write(f"${prod.PRECIO}")
     with col3:
-        if st.button("Comprar", key=f"comprar_{prod.ID_PRODUCTO}"):
-            session.table("primeroc.public.belongings") \
-                .insert([ (id_estudiante, prod.ID_PRODUCTO, False) ])
+        if st.button("Comprar", key=f"comprar_{prod.ID_PRODCUTO}"):
+            insert_stmt = f"""
+                INSERT INTO PRIMEROC.PUBLIC.BELONGINGS (ID_ESTUDIANTE, ID_PRODUCTO, REDIMIDO)
+                VALUES ({id_estudiante}, {prod.ID_PRODCUTO}, FALSE)
+            """
+            session.sql(insert_stmt).collect()
             st.success(f"Compraste {prod.PRODUCTO} 🎉")
             st.rerun()
 
