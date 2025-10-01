@@ -75,10 +75,11 @@ for prod in productos:
                 """
                 session.sql(insert_stmt).collect()
 
-                # Descontar puntos del estudiante
+                # Descontar puntos y aumentar compras totales
                 update_stmt = f"""
                     UPDATE PRIMEROC.PUBLIC.STUDENTS
-                    SET PUNTOS_ACT = PUNTOS_ACT - {prod.PRECIO}
+                    SET PUNTOS_ACT = PUNTOS_ACT - {prod.PRECIO},
+                        COMPRAS_TOTALES = COMPRAS_TOTALES + 1
                     WHERE ID_ESTUDIANTE = {id_estudiante}
                 """
                 session.sql(update_stmt).collect()
