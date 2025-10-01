@@ -134,7 +134,6 @@ if logrado:
     std_ac = std_info[3] + pts 
     std_tot = std_info[4] + pts
     std_id = std_info[0]
-    ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
     st.write("En esta práctica, obtuviste: **" + str(pts) + "pts.**")
     st.write("Puntos Actuales: " + str(std_ac) + "pts.")
