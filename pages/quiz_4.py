@@ -10,6 +10,13 @@ if "mat" in st.session_state:
 else:
     st.switch_page("streamlit_app.py")
 
+if mat == '102626':
+    st.warning("Deja de abusar de las desigualdades JAJAJA")
+    time.sleep(2)
+    st.warning("Mejor practica los temas del quiz :D")
+    time.sleep(1)
+    st.switch_page("pages/quiz_18.py")
+
 #st.write(st.session_state.tema)
 cnx = st.connection("snowflake")
 session = cnx.session()
