@@ -67,13 +67,18 @@ for prod in productos:
 # ------------------------------
 st.subheader("Tus pertenencias 🎁")
 
+bel = session.table("primeroc.public.belongings").alias("b")
+shop = session.table("primeroc.public.shop").alias("s")
+
 inventario = (
-    session.table("primeroc.public.belongings")
-    .join(session.table("primeroc.public.shop"), 
-          col("belongings.id_producto") == col("shop.id_prodCuto"))
-    .filter(col("id_estudiante") == id_estudiante)
-    .select(col("shop.producto"), col("shop.precio"), col("belongings.redimido"))
-    .collect()
+    bel.join(shop, bel["ID_PRODUCTO"] == shop["ID_PRODCUTO"])
+       .filter(bel["ID_ESTUDIANTE"] == id_estudiante)
+       .select(
+           shop["PRODUCTO"].alias("producto"),
+           shop["PRECIO"].alias("precio"),
+           bel["REDIMIDO"].alias("redimido")
+       )
+       .collect()
 )
 
 if inventario:
@@ -81,3 +86,4 @@ if inventario:
         st.write(f"- {item.PRODUCTO} (Redimido: {item.REDIMIDO})")
 else:
     st.write("Todavía no tienes productos.")
+
