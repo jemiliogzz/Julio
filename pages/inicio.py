@@ -73,20 +73,39 @@ st.subheader("Tus pertenencias 🎁")
 bel = session.table("primeroc.public.belongings").alias("b")
 shop = session.table("primeroc.public.shop").alias("s")
 
-inventario = (
-    bel.join(shop, bel["ID_PRODUCTO"] == shop["ID_PRODUCTO"])
-       .filter(bel["ID_ESTUDIANTE"] == id_estudiante)
+# Productos NO redimidos
+no_redimidos = (
+    bel.join(shop, bel["ID_PRODUCTO"] == shop["ID_PRODCUTO"])
+       .filter((bel["ID_ESTUDIANTE"] == id_estudiante) & (bel["REDIMIDO"] == False))
        .select(
            shop["PRODUCTO"].alias("producto"),
-           shop["PRECIO"].alias("precio"),
-           bel["REDIMIDO"].alias("redimido")
+           shop["PRECIO"].alias("precio")
        )
        .collect()
 )
 
-if inventario:
-    for item in inventario:
-        st.write(f"- {item.PRODUCTO} (Redimido: {item.REDIMIDO})")
-else:
-    st.write("Todavía no tienes productos.")
+# Productos redimidos
+redimidos = (
+    bel.join(shop, bel["ID_PRODUCTO"] == shop["ID_PRODCUTO"])
+       .filter((bel["ID_ESTUDIANTE"] == id_estudiante) & (bel["REDIMIDO"] == True))
+       .select(
+           shop["PRODUCTO"].alias("producto"),
+           shop["PRECIO"].alias("precio")
+       )
+       .collect()
+)
 
+# Mostrar
+st.markdown("#### 🟢 Productos disponibles (no redimidos)")
+if no_redimidos:
+    for item in no_redimidos:
+        st.write(f"- {item.PRODUCTO}")
+else:
+    st.write("No tienes productos disponibles.")
+
+st.markdown("#### ⚪ Productos ya canjeados")
+if redimidos:
+    for item in redimidos:
+        st.write(f"- {item.PRODUCTO}")
+else:
+    st.write("Aún no has canjeado nada.")
