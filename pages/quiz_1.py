@@ -1,6 +1,7 @@
 #Reutilizable
 import streamlit as st
 import random
+from datetime import datetime
 import time 
 from snowflake.snowpark.context import get_active_session
 from snowflake.snowpark.functions import col
