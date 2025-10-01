@@ -132,6 +132,8 @@ if logrado:
     pts = int((pts * 0.7) + (pts * 0.3 * info[2]) + 0.1) #1 - 6, 1 - 8, 1 - 11, 1 - 13, 2 - 16   
     std_ac = std_info[3] + pts 
     std_tot = std_info[4] + pts
+    std_id = std_info[0]
+    ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
     st.write("En esta práctica, obtuviste: **" + str(pts) + "pts.**")
     st.write("Puntos Actuales: " + str(std_ac) + "pts.")
@@ -141,6 +143,11 @@ if logrado:
     set puntos_act = """ + str(std_ac) + """, puntos_tot = """ + str(std_tot) + """
     WHERE matricula = """ + mat
     session.sql(my_insert_stmt).collect()
+    
+    my_insert_stmt = insert_stmt = f"""
+    INSERT INTO PRIMEROC.PUBLIC.DONE_DONE_DONE VALUES
+    ({std_id}, '{st.session_state.tema}', '{ts}')
+    """
 
 regresar = st.button("Volver a inicio")
 if regresar:
