@@ -10,7 +10,7 @@ if "mat" in st.session_state:
 else:
     st.switch_page("streamlit_app.py")
 
-if mat == '102626':
+if mat == '102626' or mat == '112233':
     st.warning("Deja de abusar de las desigualdades JAJAJA")
     time.sleep(2)
     st.warning("Mejor practica los temas del quiz :D")
