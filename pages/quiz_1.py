@@ -147,7 +147,7 @@ if logrado:
     
     my_insert_stmt = insert_stmt = f"""
     INSERT INTO PRIMEROC.PUBLIC.DONE_DONE_DONE VALUES
-    ({std_id}, '{st.session_state.tema}', '{ts}')
+    ({std_id}, '{st.session_state.tema}', {pts}, '{ts}')
     """
     session.sql(my_insert_stmt).collect()
 
