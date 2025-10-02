@@ -33,6 +33,9 @@ limite = session.sql(query_limite).collect()[0]["LIMITE"]
 
 # Mostrar info al alumno
 st.write(f"Has acumulado {total_actual} puntos en este tema (límite {limite}).")
+
+if total_actual > limite:
+    total_actual = limite
 st.progress(total_actual / limite)    
 
 if total_actual >= limite:
