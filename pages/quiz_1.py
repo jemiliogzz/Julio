@@ -11,7 +11,7 @@ if "mat" in st.session_state:
 else:
     st.switch_page("streamlit_app.py")
 
-#st.write(st.session_state.tema)
+new_seed = random.randint(1, 10000)
 
 cnx = st.connection("snowflake")
 session = cnx.session()
@@ -45,14 +45,17 @@ if total_actual >= limite:
     st.warning("⚠️ Ya alcanzaste el límite de puntos para este tema.")
     time.sleep(2)
     st.warning("⚠️ Regresa mañana.")
-    time.sleep(2)
-    st.switch_page("pages/inicio.py")
+    time.sleep(1)
+    regresar = st.button("Volver a inicio")
+    if regresar:
+        st.session_state.s_seed = new_seed
+        st.session_state.button_disabled = False
+        st.switch_page("pages/inicio.py")
+#Fin
 
 info = session.table("primeroc.public.subjects").filter(col('id_tema')==st.session_state.tema).collect()[0]
 st.title(info[1])
 st.write("Dificultad:", info[2])
-
-new_seed = random.randint(1, 10000)
 
 random.seed(st.session_state.s_seed)
 
