@@ -33,7 +33,12 @@ limite = session.sql(query_limite).collect()[0]["LIMITE"]
 
 # Mostrar info al alumno
 st.write(f"Has acumulado {total_actual} puntos en este tema (límite {limite}).")
-st.progress(total_actual / limite)
+st.progress(total_actual / limite)    
+
+if total_actual >= limite:
+    st.warning("⚠️ Ya alcanzaste el límite de puntos para este tema.")
+    sleep(1)
+    st.switch_page("pages/inicio.py")
 
 #st.write(st.session_state.tema)
 info = session.table("primeroc.public.subjects").filter(col('id_tema')==st.session_state.tema).collect()[0]
@@ -182,6 +187,11 @@ if logrado:
     pts = int((pts * 0.7) + (pts * 0.3 * info[2])) #1 - 6, 1 - 8, 1 - 11, 1 - 13, 2 - 16   
     std_ac = std_info[3] + pts 
     std_tot = std_info[4] + pts
+
+    # if total_actual >= limite:
+    #     st.warning("⚠️ Ya alcanzaste el límite de puntos para este tema.")
+    #     sleep(1)
+    #     st.switch_page("pages/inicio.py")
     
     st.write("En esta práctica, obtuviste: **" + str(pts) + "pts.**")
     st.write("Puntos Actuales: " + str(std_ac) + "pts.")
