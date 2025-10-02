@@ -39,18 +39,20 @@ st.write(f"Has acumulado {total_actual} puntos en este tema (límite {limite})."
 
 if total_actual > limite:
     total_actual = limite
-st.progress(total_actual / limite)    
+st.progress(total_actual / limite)
+
+# Initialize session state variable
+if 'button_disabled' not in st.session_state:
+    st.session_state.button_disabled = False
 
 if total_actual >= limite:
     st.warning("⚠️ Ya alcanzaste el límite de puntos para este tema.")
     time.sleep(2)
     st.warning("⚠️ Regresa mañana.")
     time.sleep(1)
-    regresar = st.button("Volver a inicio")
-    if regresar:
-        st.session_state.s_seed = new_seed
-        st.session_state.button_disabled = False
-        st.switch_page("pages/inicio.py")
+    st.session_state.s_seed = new_seed
+    st.session_state.button_disabled = False
+    st.switch_page("pages/inicio.py")
 #Fin
 
 info = session.table("primeroc.public.subjects").filter(col('id_tema')==st.session_state.tema).collect()[0]
@@ -58,10 +60,6 @@ st.title(info[1])
 st.write("Dificultad:", info[2])
 
 random.seed(st.session_state.s_seed)
-
-# Initialize session state variable
-if 'button_disabled' not in st.session_state:
-    st.session_state.button_disabled = False
 
 # Callback function to disable the button
 def disable_button():
