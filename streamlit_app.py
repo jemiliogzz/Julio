@@ -23,11 +23,11 @@ session = cnx.session()
 mat_login = st.text_input("Ingresa tu matrícula:", placeholder = '000000')
 st.write(mat_login)
 if mat_login:
-    # try:
-    matched = session.table("primeroc.public.students").filter(col('matricula')==mat_login).collect()
-    # except:
-    #     st.write("Ingresa tu matrícula de 6 digitos")
-    #     matched = 0
+    try:
+        matched = session.table("primeroc.public.students").filter(col('matricula')==mat_login).collect()
+    except:
+        st.write("Ingresa tu matrícula de 6 digitos")
+        matched = 0
     
     if matched:
         # Initialization
