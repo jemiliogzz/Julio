@@ -69,16 +69,15 @@ respuestas = []
 
 for i in range (5):
     #Fin
-    num = random.randint(-50, 50 + i) #Seleccionar un número inicial
+    num = random.randint(-25, 25 + i) #Seleccionar un número inicial
     res = num
     latex_str = str(num)
     for j in range(3):
-        num = random.randint(-50, 100 + i)
-        if num <= 50:
-            if num >= 0:
-                latex_str += ' +'
-            latex_str += str(num) + ' '
-            res += num
+        num = random.randint(-25, 25 + i)
+        if num >= 0:
+            latex_str += ' +'
+        latex_str += str(num) + ' '
+        res += num
 
     latex_str += '='
     preguntas.append(latex_str)
