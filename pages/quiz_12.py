@@ -41,6 +41,8 @@ st.progress(total_actual / limite)
 if total_actual >= limite:
     st.warning("⚠️ Ya alcanzaste el límite de puntos para este tema.")
     time.sleep(2)
+    st.warning("⚠️ Regresa mañana.")
+    time.sleep(1)
     st.switch_page("pages/inicio.py")
 
 #st.write(st.session_state.tema)
