@@ -7,6 +7,9 @@ import time
 from snowflake.snowpark.context import get_active_session
 from snowflake.snowpark.functions import col
 
+st.cache_data.clear()
+st.cache_resource.clear()
+
 #Write directly to the app
 st.title("Inicio de Sesión🧍")
 st.write(
