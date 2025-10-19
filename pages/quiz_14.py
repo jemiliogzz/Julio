@@ -106,6 +106,9 @@ for i in range (5):
         
 #Reutilizable
 with st.form("my_form"):
+    st.write("**Instrucciones:** Para cada expresión algebraica, simplifica y suma los términos semejantes.")
+    st.write("---")
+    
     #Pregunta 1
     res_est0 = []
     st.latex(preguntas[0])

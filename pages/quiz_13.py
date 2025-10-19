@@ -119,6 +119,9 @@ for i in range (5):
 
 #Reutilizable
 with st.form("my_form"):
+    st.write("**Instrucciones:** Para cada expresión algebraica, ingresa la forma simplificada.")
+    st.write("---")
+    
     #Pregunta 1
     st.latex(preguntas[0])
     res_est0 = st.text_input("1. Ingresa el valor de x:")

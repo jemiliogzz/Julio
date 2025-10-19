@@ -105,6 +105,9 @@ for i in range (5):
 
 #Reutilizable
 with st.form("my_form"):
+    st.write("**Instrucciones:** Para cada expresión verbal, escribe la expresión algebraica correspondiente.")
+    st.write("---")
+    
     #Pregunta 1
     st.write(preguntas[0])
     res_est0 = st.text_input("1. Ingresa tu respuesta:")

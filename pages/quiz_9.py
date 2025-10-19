@@ -128,7 +128,10 @@ for i in range (5):
     
 #Reutilizable
 with st.form("my_form"):
-   #Pregunta 1
+    st.write("**Instrucciones:** Para cada número, selecciona TODOS los conjuntos numéricos a los que pertenece.")
+    st.write("---")
+    
+    #Pregunta 1
     st.latex(preguntas[0])
     res_est0 = st.multiselect(
         "1. Selecciona TODOS los que correspondan",

@@ -123,6 +123,9 @@ for i in range (5):
 
 #Reutilizable
 with st.form("my_form"):
+    st.write("**Instrucciones:** Para cada desigualdad, indica si es Verdadero o Falso.")
+    st.write("---")
+    
     #Pregunta 1
     st.latex(preguntas[0])
     res_est0 = st.radio(

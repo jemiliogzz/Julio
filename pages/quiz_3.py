@@ -92,7 +92,10 @@ for i in range (5):
 
 #Reutilizable
 with st.form("my_form"):
-   #Pregunta 1
+    st.write("**Instrucciones:** Para cada problema, coloca el punto donde corresponda en la gráfica.")
+    st.write("---")
+    
+    #Pregunta 1
     st.latex(preguntas[0])
     res_est0 = st.slider("1. Ingresa tu respuesta: ", -10, 10, 0)
 

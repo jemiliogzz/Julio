@@ -116,6 +116,9 @@ opciones = ['Inversa Aditiva', 'Inversa Multiplicativa', 'Asociativa Aditiva', '
             'Distributiva']
 #Reutilizable
 with st.form("my_form"):
+    st.write("**Instrucciones:** Para cada propiedad demostrada, selecciona el nombre correcto de la propiedad.")
+    st.write("---")
+    
     #Pregunta 1
     st.latex(preguntas[0])
     res_est0 = st.radio(

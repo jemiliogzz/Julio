@@ -118,6 +118,9 @@ for i in range (5):
 
 #Reutilizable
 with st.form("my_form"):
+    st.write("**Instrucciones:** Para cada ecuación con múltiples variables, encuentra el valor de x.")
+    st.write("---")
+    
     #Pregunta 1
     st.latex(preguntas[0])
     st.write('y = ', vars[0][0])

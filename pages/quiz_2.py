@@ -95,7 +95,10 @@ for i in range (5):
     
 #Reutilizable
 with st.form("my_form"):
-   #Pregunta 1
+    st.write("**Instrucciones:** Para cada problema, ingresa tu respuesta.")
+    st.write("---")
+    
+    #Pregunta 1
     st.latex(preguntas[0])
     res_est0 = st.text_input("1. Ingresa tu respuesta:")
 

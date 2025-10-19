@@ -103,6 +103,9 @@ for i in range (5):
 
 #Reutilizable
 with st.form("my_form"):
+    st.write("**Instrucciones:** Para cada ecuación lineal, completa los valores de 'y' y verifica si la gráfica es correcta.")
+    st.write("---")
+    
     #Pregunta 1
     st.latex(preguntas[0])
     

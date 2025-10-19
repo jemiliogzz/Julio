@@ -91,6 +91,9 @@ for i in range (5):
 
 #Reutilizable
 with st.form("my_form"):
+    st.write("**Instrucciones:** Para cada ecuación con valor absoluto, encuentra las dos soluciones posibles.")
+    st.write("---")
+    
     #Pregunta 1
     st.latex(preguntas[0])
     res_est00 = st.text_input("1. Ingresa la solución #1:")
