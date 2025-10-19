@@ -278,7 +278,7 @@ with st.form("my_form"):
         with col_n2:
             tipo_izq = st.selectbox(
                 "Extremo izquierdo:",
-                options=['-inf', 'número'],
+                options=['-inf', 'aaaaaa'],
                 key=f"tizq_{i}",
                 help="Selecciona 'número' para usar el valor de la desigualdad resuelta"
             )
