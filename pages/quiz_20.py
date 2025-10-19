@@ -151,16 +151,22 @@ for i in range(5):
     if coef_x == 1:
         # Caso simple: el resultado tiene la forma más común
         valor_x = termino_independiente
-        desigualdad_resuelta = f"x {operador_final} {valor_x}"
+        # Formatear como entero si es entero, como float si es decimal
+        if isinstance(valor_x, int):
+            desigualdad_resuelta = f"x {operador_final} {valor_x}"
+        else:
+            desigualdad_resuelta = f"x {operador_final} {valor_x:.2f}"
     else:
         # Dividir por coef_x (simplificar si es posible)
         if termino_independiente % coef_x == 0:
             valor_x = termino_independiente // coef_x
             desigualdad_resuelta = f"x {operador_final} {valor_x}"
         else:
-            # Dejar como fracción
-            desigualdad_resuelta = f"x {operador_final} {termino_independiente}/{coef_x}"
+            # Calcular el valor decimal
             valor_x = termino_independiente / coef_x
+            # Redondear a 2 decimales para facilitar la entrada
+            valor_x = round(valor_x, 2)
+            desigualdad_resuelta = f"x {operador_final} {valor_x}"
     
     # Determinar características de la gráfica
     if operador_final in ['<', '>']:
@@ -176,14 +182,20 @@ for i in range(5):
     grafica = f"{tipo_punto}, {direccion_flecha}"
     
     # Generar notación de intervalos
+    # Formatear el valor correctamente (int o float)
+    if isinstance(valor_x, float) and valor_x.is_integer():
+        valor_x_str = str(int(valor_x))
+    else:
+        valor_x_str = str(valor_x)
+    
     if operador_final == '<':
-        notacion = f"(-inf, {valor_x})"
+        notacion = f"(-inf, {valor_x_str})"
     elif operador_final == '≤':
-        notacion = f"(-inf, {valor_x}]"
+        notacion = f"(-inf, {valor_x_str}]"
     elif operador_final == '>':
-        notacion = f"({valor_x}, inf)"
+        notacion = f"({valor_x_str}, inf)"
     else:  # ≥
-        notacion = f"[{valor_x}, inf)"
+        notacion = f"[{valor_x_str}, inf)"
     
     # Almacenar pregunta y respuestas
     preguntas.append(desigualdad_original)
@@ -195,10 +207,7 @@ for i in range(5):
 
 # Formulario con las 5 preguntas
 with st.form("my_form"):
-    st.write("**Instrucciones:** Para cada desigualdad, proporciona:")
-    st.write("1. La desigualdad resuelta (ej: x < 2, x ≥ -3, etc.)")
-    st.write("2. La gráfica: 'abierto' o 'cerrado', seguido de 'izquierda' o 'derecha' (ej: abierto, izquierda)")
-    st.write("3. La notación de intervalos (ej: (-inf, 2), [3, inf), etc.)")
+    st.write("**Instrucciones:** Para cada desigualdad, completa los campos correspondientes.")
     st.write("---")
     
     respuestas_estudiante = []
@@ -207,21 +216,125 @@ with st.form("my_form"):
         st.write(f"**Pregunta {i+1}:**")
         st.latex(preguntas[i])
         
-        col1, col2, col3 = st.columns(3)
+        # Sección de desigualdad resuelta
+        st.write("**a) Desigualdad resuelta:**")
+        col_d1, col_d2, col_d3 = st.columns([1, 1, 2])
+        with col_d1:
+            st.write("x")
+        with col_d2:
+            operador_est = st.selectbox(
+                "Operador:",
+                options=['<', '>', '≤', '≥'],
+                key=f"op_{i}",
+                label_visibility="collapsed"
+            )
+        with col_d3:
+            valor_est = st.number_input(
+                "Valor:",
+                value=0.0,
+                step=0.5,
+                format="%.2f",
+                key=f"val_{i}",
+                label_visibility="collapsed"
+            )
         
-        with col1:
-            des = st.text_input(f"{i+1}. Desigualdad resuelta:", key=f"des_{i}")
-        with col2:
-            graf = st.text_input(f"{i+1}. Gráfica:", key=f"graf_{i}", 
-                                placeholder="ej: abierto, izquierda")
-        with col3:
-            nota = st.text_input(f"{i+1}. Notación:", key=f"nota_{i}",
-                                placeholder="ej: (-inf, 2)")
+        # Formatear el valor correctamente (int o float)
+        if valor_est == int(valor_est):
+            valor_str = str(int(valor_est))
+        else:
+            valor_str = str(valor_est)
+        desigualdad_est = f"x {operador_est} {valor_str}"
+        
+        # Sección de gráfica
+        st.write("**b) Gráfica:**")
+        col_g1, col_g2 = st.columns(2)
+        with col_g1:
+            tipo_punto_est = st.selectbox(
+                "Tipo de punto:",
+                options=['abierto', 'cerrado'],
+                key=f"punto_{i}"
+            )
+        with col_g2:
+            direccion_est = st.selectbox(
+                "Dirección de la flecha:",
+                options=['izquierda', 'derecha'],
+                key=f"dir_{i}"
+            )
+        
+        grafica_est = f"{tipo_punto_est}, {direccion_est}"
+        
+        # Sección de notación de intervalos
+        st.write("**c) Notación de intervalos:**")
+        col_n1, col_n2, col_n3, col_n4 = st.columns([1, 2, 2, 1])
+        
+        with col_n1:
+            paren_izq = st.selectbox(
+                "(",
+                options=['(', '['],
+                key=f"pi_{i}",
+                label_visibility="collapsed"
+            )
+        
+        with col_n2:
+            tipo_izq = st.selectbox(
+                "Extremo izquierdo:",
+                options=['-inf', 'número'],
+                key=f"tizq_{i}"
+            )
+            if tipo_izq == 'número':
+                val_izq_num = st.number_input(
+                    "Valor izq:",
+                    value=0.0,
+                    step=0.5,
+                    format="%.2f",
+                    key=f"vizq_{i}",
+                    label_visibility="collapsed"
+                )
+                # Formatear como entero si es entero
+                if val_izq_num == int(val_izq_num):
+                    val_izq = str(int(val_izq_num))
+                else:
+                    val_izq = str(val_izq_num)
+            else:
+                val_izq = '-inf'
+        
+        with col_n3:
+            tipo_der = st.selectbox(
+                "Extremo derecho:",
+                options=['número', 'inf'],
+                key=f"tder_{i}"
+            )
+            if tipo_der == 'número':
+                val_der_num = st.number_input(
+                    "Valor der:",
+                    value=0.0,
+                    step=0.5,
+                    format="%.2f",
+                    key=f"vder_{i}",
+                    label_visibility="collapsed"
+                )
+                # Formatear como entero si es entero
+                if val_der_num == int(val_der_num):
+                    val_der = str(int(val_der_num))
+                else:
+                    val_der = str(val_der_num)
+            else:
+                val_der = 'inf'
+        
+        with col_n4:
+            paren_der = st.selectbox(
+                ")",
+                options=[')', ']'],
+                key=f"pd_{i}",
+                label_visibility="collapsed"
+            )
+        
+        notacion_est = f"{paren_izq}{val_izq}, {val_der}{paren_der}"
         
         respuestas_estudiante.append({
-            'desigualdad': des,
-            'grafica': graf,
-            'notacion': nota
+            'desigualdad': desigualdad_est,
+            'grafica': grafica_est,
+            'notacion': notacion_est
         })
         
         st.write("---")
@@ -237,7 +350,7 @@ if logrado:
         respuesta_correcta = respuestas[i]
         respuesta_est = respuestas_estudiante[i]
         
-        # Verificar cada parte de la respuesta
+        # Verificar cada parte de la respuesta (normalizar para comparación)
         des_correcta = normalizar(respuesta_correcta['desigualdad']) == normalizar(respuesta_est['desigualdad'])
         graf_correcta = normalizar(respuesta_correcta['grafica']) == normalizar(respuesta_est['grafica'])
         nota_correcta = normalizar(respuesta_correcta['notacion']) == normalizar(respuesta_est['notacion'])
@@ -250,13 +363,13 @@ if logrado:
             # Mostrar qué partes estuvieron incorrectas
             errores = []
             if not des_correcta:
-                errores.append(f"Desigualdad: {respuesta_correcta['desigualdad']}")
+                errores.append(f"**Desigualdad:** {respuesta_correcta['desigualdad']}")
             if not graf_correcta:
-                errores.append(f"Gráfica: {respuesta_correcta['grafica']}")
+                errores.append(f"**Gráfica:** {respuesta_correcta['grafica']}")
             if not nota_correcta:
-                errores.append(f"Notación: {respuesta_correcta['notacion']}")
+                errores.append(f"**Notación:** {respuesta_correcta['notacion']}")
             
-            mensaje_error = f"{i+1}. Las respuestas correctas eran: " + " | ".join(errores)
+            mensaje_error = f"{i+1}. " + " | ".join(errores)
             st.warning(mensaje_error)
         
         time.sleep(0.5)
