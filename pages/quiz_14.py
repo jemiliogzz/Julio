@@ -109,60 +109,22 @@ with st.form("my_form"):
     st.write("**Instrucciones:** Para cada expresión algebraica, simplifica y suma los términos semejantes.")
     st.write("---")
     
-    #Pregunta 1
-    res_est0 = []
-    st.latex(preguntas[0])
-    res_est0x = st.text_input("1. Cantidad de 'x':")
-    res_est0y = st.text_input("1. Cantidad de 'y':")
-    res_est0z = st.text_input("1. Cantidad de 'z':")
-
-    res_est0.append(res_est0x.replace(" ", ""))
-    res_est0.append(res_est0y.replace(" ", ""))
-    res_est0.append(res_est0z.replace(" ", ""))
+    respuestas_estudiante = []
     
-    #Pregunta 2
-    res_est1 = []
-    st.latex(preguntas[1])
-    res_est1x = st.text_input("2. Cantidad de 'x':")
-    res_est1y = st.text_input("2. Cantidad de 'y':")
-    res_est1z = st.text_input("2. Cantidad de 'z':")
-
-    res_est1.append(res_est1x.replace(" ", ""))
-    res_est1.append(res_est1y.replace(" ", ""))
-    res_est1.append(res_est1z.replace(" ", ""))
-
-    #Pregunta 3
-    res_est2 = []
-    st.latex(preguntas[2])
-    res_est2x = st.text_input("3. Cantidad de 'x':")
-    res_est2y = st.text_input("3. Cantidad de 'y':")
-    res_est2z = st.text_input("3. Cantidad de 'z':")
-
-    res_est2.append(res_est2x.replace(" ", ""))
-    res_est2.append(res_est2y.replace(" ", ""))
-    res_est2.append(res_est2z.replace(" ", ""))
-    
-    #Pregunta 4
-    res_est3 = []
-    st.latex(preguntas[3])
-    res_est3x = st.text_input("4. Cantidad de 'x':")
-    res_est3y = st.text_input("4. Cantidad de 'y':")
-    res_est3z = st.text_input("4. Cantidad de 'z':")
-
-    res_est3.append(res_est3x.replace(" ", ""))
-    res_est3.append(res_est3y.replace(" ", ""))
-    res_est3.append(res_est3z.replace(" ", ""))
-
-    #Pregunta 5
-    res_est4 = []
-    st.latex(preguntas[4])
-    res_est4x = st.text_input("5. Cantidad de 'x':")
-    res_est4y = st.text_input("5. Cantidad de 'y':")
-    res_est4z = st.text_input("5. Cantidad de 'z':")
-
-    res_est4.append(res_est4x.replace(" ", ""))
-    res_est4.append(res_est4y.replace(" ", ""))
-    res_est4.append(res_est4z.replace(" ", ""))
+    for i in range(5):
+        st.write(f"**Pregunta {i+1}:**")
+        res_est = []
+        st.latex(preguntas[i])
+        res_estx = st.text_input(f"{i+1}. Cantidad de 'x':", key=f"x_{i}")
+        res_esty = st.text_input(f"{i+1}. Cantidad de 'y':", key=f"y_{i}")
+        res_estz = st.text_input(f"{i+1}. Cantidad de 'z':", key=f"z_{i}")
+        
+        res_est.append(res_estx.replace(" ", ""))
+        res_est.append(res_esty.replace(" ", ""))
+        res_est.append(res_estz.replace(" ", ""))
+        
+        respuestas_estudiante.append(res_est)
+        st.write("---")
 
     logrado = st.form_submit_button('Confirmar respuestas', on_click=disable_button, disabled=st.session_state.button_disabled)
 
@@ -170,49 +132,15 @@ with st.form("my_form"):
 if logrado:
     pts = 0
     
-    #Respuesta 0
-    if respuestas[0] == res_est0:
-        st.success("1. Bravooo")
-        pts += 1
-    else:
-        mensaje_error = "1. La respuesta era: " + str(respuestas[0])
-        st.warning(mensaje_error)
-    
-    time.sleep(0.8)
-    #Respuesta 1
-    if respuestas[1] == res_est1:
-        st.success("2. Bravooo")
-        pts += 1
-    else:
-        mensaje_error = "2. La respuesta era: " + str(respuestas[1])
-        st.warning(mensaje_error)
+    for i in range(5):
+        if respuestas[i] == respuestas_estudiante[i]:
+            st.success(f"{i+1}. Bravooo")
+            pts += 1
+        else:
+            mensaje_error = f"{i+1}. La respuesta era: " + str(respuestas[i])
+            st.warning(mensaje_error)
         
-    time.sleep(0.8)
-    #Respuesta 2
-    if respuestas[2] == res_est2:
-        st.success("3. Bravooo")
-        pts += 1
-    else:
-        mensaje_error = "3. La respuesta era: " + str(respuestas[2])
-        st.warning(mensaje_error)
-    
-    time.sleep(0.8)
-    #Respuesta 3
-    if respuestas[3] == res_est3:
-        st.success("4. Bravooo")
-        pts += 1
-    else:
-        mensaje_error = "4. La respuesta era: " + str(respuestas[3])
-        st.warning(mensaje_error)
-    
-    time.sleep(0.8)
-    #Respuesta 4
-    if respuestas[4] == res_est4:
-        st.success("5. Bravooo")
-        pts += 1
-    else:
-        mensaje_error = "5. La respuesta era: " + str(respuestas[4])
-        st.warning(mensaje_error)
+        time.sleep(0.8)
 
     if pts == 5:
         st.write(f"Felicidades por contestar todo bien. Obtienes", info[2], "punto(s) adicional.")

@@ -225,51 +225,21 @@ with st.form("my_form"):
     st.write("**Instrucciones:** Para cada operación, resuelve y encuentra el resultado.")
     st.write("---")
     
-    #Pregunta 1
-    st.latex(preguntas[0])
-    res_est0 = st.text_input("1. Ingresa tu respuesta:")
-
-    if res_est0:
-        try:
-            res_est0 = float(res_est0)
-        except:
-            st.warning('Ingresa un numero válido')
-
-    #Pregunta 2
-    st.latex(preguntas[1])
-    res_est1 = st.text_input("2. Ingresa tu respuesta:")
-    if res_est1:
-        try:
-            res_est1 = float(res_est1)
-        except:
-            st.warning('Ingresa un numero válido')
-
-    #Pregunta 3
-    st.latex(preguntas[2])
-    res_est2 = st.text_input("3. Ingresa tu respuesta:")
-    if res_est2:
-        try:
-            res_est2 = float(res_est2)
-        except:
-            st.warning('Ingresa un numero válido')
+    respuestas_estudiante = []
     
-    #Pregunta 4
-    st.latex(preguntas[3])
-    res_est3 = st.text_input("4. Ingresa tu respuesta:")
-    if res_est3:
-        try:
-            res_est3 = float(res_est3)
-        except:
-            st.warning('Ingresa un numero válido')
-
-    #Pregunta 5
-    st.latex(preguntas[4])
-    res_est4 = st.text_input("5. Ingresa tu respuesta:")
-    if res_est4:
-        try:
-            res_est4 = float(res_est4)
-        except:
-            st.warning('Ingresa un numero válido')
+    for i in range(5):
+        st.write(f"**Pregunta {i+1}:**")
+        st.latex(preguntas[i])
+        res_est = st.text_input(f"{i+1}. Ingresa tu respuesta:", key=f"resp_{i}")
+        
+        if res_est:
+            try:
+                res_est = float(res_est)
+            except:
+                st.warning('Ingresa un numero válido')
+        
+        respuestas_estudiante.append(res_est)
+        st.write("---")
     
     logrado = st.form_submit_button('Confirmar respuestas', on_click=disable_button, disabled=st.session_state.button_disabled)
 
@@ -277,49 +247,15 @@ with st.form("my_form"):
 if logrado:
     pts = 0
     
-    #Respuesta 0
-    if respuestas[0] == res_est0:
-        st.success("1. Bravooo")
-        pts += 1
-    else:
-        mensaje_error = "1. La respuesta era: " + str(respuestas[0])
-        st.warning(mensaje_error)
-    
-    time.sleep(0.8)
-    #Respuesta 1
-    if respuestas[1] == res_est1:
-        st.success("2. Bravooo")
-        pts += 1
-    else:
-        mensaje_error = "2. La respuesta era: " + str(respuestas[1])
-        st.warning(mensaje_error)
+    for i in range(5):
+        if respuestas[i] == respuestas_estudiante[i]:
+            st.success(f"{i+1}. Bravooo")
+            pts += 1
+        else:
+            mensaje_error = f"{i+1}. La respuesta era: " + str(respuestas[i])
+            st.warning(mensaje_error)
         
-    time.sleep(0.8)
-    #Respuesta 2
-    if respuestas[2] == res_est2:
-        st.success("3. Bravooo")
-        pts += 1
-    else:
-        mensaje_error = "3. La respuesta era: " + str(respuestas[2])
-        st.warning(mensaje_error)
-    
-    time.sleep(0.8)
-    #Respuesta 3
-    if respuestas[3] == res_est3:
-        st.success("4. Bravooo")
-        pts += 1
-    else:
-        mensaje_error = "4. La respuesta era: " + str(respuestas[3])
-        st.warning(mensaje_error)
-    
-    time.sleep(0.8)
-    #Respuesta 4
-    if respuestas[4] == res_est4:
-        st.success("5. Bravooo")
-        pts += 1
-    else:
-        mensaje_error = "5. La respuesta era: " + str(respuestas[4])
-        st.warning(mensaje_error)
+        time.sleep(0.8)
 
     if pts == 5:
         st.write(f"Felicidades por contestar todo bien. Obtienes", info[2], "punto(s) adicional.")

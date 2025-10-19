@@ -94,30 +94,15 @@ with st.form("my_form"):
     st.write("**Instrucciones:** Para cada ecuación con valor absoluto, encuentra las dos soluciones posibles.")
     st.write("---")
     
-    #Pregunta 1
-    st.latex(preguntas[0])
-    res_est00 = st.text_input("1. Ingresa la solución #1:")
-    res_est01 = st.text_input("1. Ingresa la solución #2:")
-
-    #Pregunta 2
-    st.latex(preguntas[1])
-    res_est10 = st.text_input("2. Ingresa la solución #1:")
-    res_est11 = st.text_input("2. Ingresa la solución #2:")
-
-    #Pregunta 3
-    st.latex(preguntas[2])
-    res_est20 = st.text_input("3. Ingresa la solución #1:")
-    res_est21 = st.text_input("3. Ingresa la solución #2:")
+    respuestas_estudiante = []
     
-    #Pregunta 4
-    st.latex(preguntas[3])
-    res_est30 = st.text_input("4. Ingresa la solución #1:")
-    res_est31 = st.text_input("4. Ingresa la solución #2:")
-
-    #Pregunta 5
-    st.latex(preguntas[4])
-    res_est40 = st.text_input("5. Ingresa la solución #1:")
-    res_est41 = st.text_input("5. Ingresa la solución #2:")
+    for i in range(5):
+        st.write(f"**Pregunta {i+1}:**")
+        st.latex(preguntas[i])
+        res_est0 = st.text_input(f"{i+1}. Ingresa la solución #1:", key=f"sol1_{i}")
+        res_est1 = st.text_input(f"{i+1}. Ingresa la solución #2:", key=f"sol2_{i}")
+        respuestas_estudiante.append((res_est0, res_est1))
+        st.write("---")
 
     logrado = st.form_submit_button('Confirmar respuestas', on_click=disable_button, disabled=st.session_state.button_disabled)
 
@@ -125,104 +110,20 @@ with st.form("my_form"):
 if logrado:
     pts = 0
     
-    #Respuesta 0
-    if respuestas[0][0] == res_est00.replace(" ", ""):
-      if respuestas[0][1] == res_est01.replace(" ", ""):
-        st.success("1. Bravooo")
-        pts += 1
-      else:
-        mensaje_error = "1. La respuesta era: " + str(respuestas[0][0]) + " y " + str(respuestas[0][1])
-        st.warning(mensaje_error)
-    elif respuestas[0][1] == res_est00.replace(" ", ""):
-      if respuestas[0][0] == res_est01.replace(" ", ""):
-        st.success("1. Bravooo")
-        pts += 1
-      else:
-        mensaje_error = "1. La respuesta era: " + str(respuestas[0][0]) + " y " + str(respuestas[0][1])
-        st.warning(mensaje_error)
-    else:
-        mensaje_error = "1. La respuesta era: " + str(respuestas[0][0]) + " y " + str(respuestas[0][1])
-        st.warning(mensaje_error)
-    
-    time.sleep(0.8)
-    #Respuesta 1
-    if respuestas[1][0] == res_est10.replace(" ", ""):
-      if respuestas[1][1] == res_est11.replace(" ", ""):
-        st.success("2. Bravooo")
-        pts += 1
-      else:
-        mensaje_error = "2. La respuesta era: " + str(respuestas[1][0]) + " y " + str(respuestas[1][1])
-        st.warning(mensaje_error)
-    elif respuestas[1][1] == res_est10.replace(" ", ""):
-      if respuestas[1][0] == res_est11.replace(" ", ""):
-        st.success("1. Bravooo")
-        pts += 1
-      else:
-        mensaje_error = "2. La respuesta era: " + str(respuestas[1][0]) + " y " + str(respuestas[1][1])
-        st.warning(mensaje_error)
-    else:
-        mensaje_error = "2. La respuesta era: " + str(respuestas[1][0]) + " y " + str(respuestas[1][1])
-        st.warning(mensaje_error)
+    for i in range(5):
+        res_est0 = respuestas_estudiante[i][0].replace(" ", "")
+        res_est1 = respuestas_estudiante[i][1].replace(" ", "")
         
-    time.sleep(0.8)
-    #Respuesta 2
-    if respuestas[2][0] == res_est20.replace(" ", ""):
-      if respuestas[2][1] == res_est21.replace(" ", ""):
-        st.success("3. Bravooo")
-        pts += 1
-      else:
-        mensaje_error = "3. La respuesta era: " + str(respuestas[2][0]) + " y " + str(respuestas[2][1])
-        st.warning(mensaje_error)
-    elif respuestas[2][1] == res_est20.replace(" ", ""):
-      if respuestas[2][0] == res_est21.replace(" ", ""):
-        st.success("3. Bravooo")
-        pts += 1
-      else:
-        mensaje_error = "3. La respuesta era: " + str(respuestas[2][0]) + " y " + str(respuestas[2][1])
-        st.warning(mensaje_error)
-    else:
-        mensaje_error = "3. La respuesta era: " + str(respuestas[2][0]) + " y " + str(respuestas[2][1])
-        st.warning(mensaje_error)
-    
-    time.sleep(0.8)
-    #Respuesta 3
-    if respuestas[3][0] == res_est30.replace(" ", ""):
-      if respuestas[3][1] == res_est31.replace(" ", ""):
-        st.success("4. Bravooo")
-        pts += 1
-      else:
-        mensaje_error = "4. La respuesta era: " + str(respuestas[3][0]) + " y " + str(respuestas[3][1])
-        st.warning(mensaje_error)
-    elif respuestas[3][1] == res_est30.replace(" ", ""):
-      if respuestas[3][0] == res_est31.replace(" ", ""):
-        st.success("4. Bravooo")
-        pts += 1
-      else:
-        mensaje_error = "4. La respuesta era: " + str(respuestas[3][0]) + " y " + str(respuestas[3][1])
-        st.warning(mensaje_error)
-    else:
-        mensaje_error = "4. La respuesta era: " + str(respuestas[3][0]) + " y " + str(respuestas[3][1])
-        st.warning(mensaje_error)
-    
-    time.sleep(0.8)
-    #Respuesta 4
-    if respuestas[4][0] == res_est40.replace(" ", ""):
-      if respuestas[4][1] == res_est41.replace(" ", ""):
-        st.success("5. Bravooo")
-        pts += 1
-      else:
-        mensaje_error = "5. La respuesta era: " + str(respuestas[4][0]) + " y " + str(respuestas[4][1])
-        st.warning(mensaje_error)
-    elif respuestas[4][1] == res_est40.replace(" ", ""):
-      if respuestas[4][0] == res_est41.replace(" ", ""):
-        st.success("5. Bravooo")
-        pts += 1
-      else:
-        mensaje_error = "5. La respuesta era: " + str(respuestas[4][0]) + " y " + str(respuestas[4][1])
-        st.warning(mensaje_error)
-    else:
-        mensaje_error = "5. La respuesta era: " + str(respuestas[4][0]) + " y " + str(respuestas[4][1])
-        st.warning(mensaje_error)
+        # Verificar si las dos soluciones son correctas (en cualquier orden)
+        if (respuestas[i][0] == res_est0 and respuestas[i][1] == res_est1) or \
+           (respuestas[i][1] == res_est0 and respuestas[i][0] == res_est1):
+            st.success(f"{i+1}. Bravooo")
+            pts += 1
+        else:
+            mensaje_error = f"{i+1}. La respuesta era: {respuestas[i][0]} y {respuestas[i][1]}"
+            st.warning(mensaje_error)
+        
+        time.sleep(0.8)
 
     if pts == 5:
         st.write(f"Felicidades por contestar todo bien. Obtienes", info[2], "punto(s) adicional.")

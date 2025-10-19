@@ -92,100 +92,35 @@ with st.form("my_form"):
     st.write("**Instrucciones:** Para cada operación con fracciones, ingresa el numerador y denominador del resultado.")
     st.write("---")
     
-    #Pregunta 1
-    st.latex(preguntas[0])
-    res_num0 = st.text_input("1. Ingresa el numerador:")
-    res_den0 = st.text_input("1. Ingresa el denominador:")
-    res_est0 = ''
-    if res_den0:
-        res_est0 = str(round(int(res_num0) / int(res_den0), 2))
-    st.write(res_est0)
-
-    #Pregunta 2
-    st.latex(preguntas[1])
-    res_num1 = st.text_input("2. Ingresa el numerador:")
-    res_den1 = st.text_input("2. Ingresa el denominador:")
-    res_est1 = ''
-    if res_den1:
-        res_est1 = str(round(int(res_num1) / int(res_den1), 2))
-    st.write(res_est1)
-
-    #Pregunta 3
-    st.latex(preguntas[2])
-    res_num2 = st.text_input("3. Ingresa el numerador:")
-    res_den2 = st.text_input("3. Ingresa el denominador:")
-    res_est2 = ''
-    if res_den2:
-        res_est2 = str(round(int(res_num2) / int(res_den2), 2))
-    st.write(res_est2)
+    respuestas_estudiante = []
     
-    #Pregunta 4
-    st.latex(preguntas[3])
-    res_num3 = st.text_input("4. Ingresa el numerador:")
-    res_den3 = st.text_input("4. Ingresa el denominador:")
-    res_est3 = ''
-    if res_den3:
-        res_est3 = str(round(int(res_num3) / int(res_den3), 2))
-    st.write(res_est3)
+    for i in range(5):
+        st.write(f"**Pregunta {i+1}:**")
+        st.latex(preguntas[i])
+        res_num = st.text_input(f"{i+1}. Ingresa el numerador:", key=f"num_{i}")
+        res_den = st.text_input(f"{i+1}. Ingresa el denominador:", key=f"den_{i}")
+        res_est = ''
+        if res_den:
+            res_est = str(round(int(res_num) / int(res_den), 2))
+        st.write(res_est)
+        respuestas_estudiante.append(res_est)
+        st.write("---")
 
-    #Pregunta 5
-    st.latex(preguntas[4])
-    res_num4 = st.text_input("5. Ingresa el numerador:")
-    res_den4 = st.text_input("5. Ingresa el denominador:")
-    res_est4 = ''
-    if res_den4:
-        res_est4 = str(round(int(res_num4) / int(res_den4), 2))
-
-    st.write(res_est4)
     logrado = st.form_submit_button('Confirmar respuestas', on_click=disable_button, disabled=st.session_state.button_disabled)
 
 #Reutilizable
 if logrado:
     pts = 0
     
-    #Respuesta 0
-    if respuestas[0] == res_est0.replace(" ", ""):
-        st.success("1. Bravooo")
-        pts += 1
-    else:
-        mensaje_error = "1. La respuesta era: " + str(respuestas[0])
-        st.warning(mensaje_error)
-    
-    time.sleep(0.8)
-    #Respuesta 1
-    if respuestas[1] == res_est1.replace(" ", ""):
-        st.success("2. Bravooo")
-        pts += 1
-    else:
-        mensaje_error = "2. La respuesta era: " + str(respuestas[1])
-        st.warning(mensaje_error)
+    for i in range(5):
+        if respuestas[i] == respuestas_estudiante[i].replace(" ", ""):
+            st.success(f"{i+1}. Bravooo")
+            pts += 1
+        else:
+            mensaje_error = f"{i+1}. La respuesta era: " + str(respuestas[i])
+            st.warning(mensaje_error)
         
-    time.sleep(0.8)
-    #Respuesta 2
-    if respuestas[2] == res_est2.replace(" ", ""):
-        st.success("3. Bravooo")
-        pts += 1
-    else:
-        mensaje_error = "3. La respuesta era: " + str(respuestas[2])
-        st.warning(mensaje_error)
-    
-    time.sleep(0.8)
-    #Respuesta 3
-    if respuestas[3] == res_est3.replace(" ", ""):
-        st.success("4. Bravooo")
-        pts += 1
-    else:
-        mensaje_error = "4. La respuesta era: " + str(respuestas[3])
-        st.warning(mensaje_error)
-    
-    time.sleep(0.8)
-    #Respuesta 4
-    if respuestas[4] == res_est4.replace(" ", ""):
-        st.success("5. Bravooo")
-        pts += 1
-    else:
-        mensaje_error = "5. La respuesta era: " + str(respuestas[4])
-        st.warning(mensaje_error)
+        time.sleep(0.8)
 
     if pts == 5:
         st.write(f"Felicidades por contestar todo bien. Obtienes", info[2], "punto(s) adicional.")
