@@ -265,7 +265,6 @@ with st.form("my_form"):
         
         # Sección de notación de intervalos
         st.write("**c) Notación de intervalos:**")
-        st.caption("El número se tomará automáticamente de la desigualdad resuelta")
         col_n1, col_n2, col_n3, col_n4 = st.columns([1, 2, 2, 1])
         
         with col_n1:
@@ -278,24 +277,18 @@ with st.form("my_form"):
         with col_n2:
             tipo_izq = st.selectbox(
                 "Extremo izquierdo:",
-                options=['-inf', 'número'],
+                options=['-inf', valor_str],
                 key=f"tizq_{i}"
             )
-            if tipo_izq == 'número':
-                val_izq = valor_str
-            else:
-                val_izq = '-inf'
+            val_izq = tipo_izq
         
         with col_n3:
             tipo_der = st.selectbox(
                 "Extremo derecho:",
-                options=['número', 'inf'],
+                options=[valor_str, 'inf'],
                 key=f"tder_{i}"
             )
-            if tipo_der == 'número':
-                val_der = valor_str
-            else:
-                val_der = 'inf'
+            val_der = tipo_der
         
         with col_n4:
             paren_der = st.selectbox(
