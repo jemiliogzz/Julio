@@ -265,14 +265,14 @@ with st.form("my_form"):
         
         # Sección de notación de intervalos
         st.write("**c) Notación de intervalos:**")
+        st.caption("El número se tomará automáticamente de la desigualdad resuelta")
         col_n1, col_n2, col_n3, col_n4 = st.columns([1, 2, 2, 1])
         
         with col_n1:
             paren_izq = st.selectbox(
-                "(",
+                "Paréntesis/Corchete izquierdo:",
                 options=['(', '['],
-                key=f"pi_{i}",
-                label_visibility="collapsed"
+                key=f"pi_{i}"
             )
         
         with col_n2:
@@ -282,19 +282,7 @@ with st.form("my_form"):
                 key=f"tizq_{i}"
             )
             if tipo_izq == 'número':
-                val_izq_num = st.number_input(
-                    "Valor izq:",
-                    value=0.0,
-                    step=0.5,
-                    format="%.2f",
-                    key=f"vizq_{i}",
-                    label_visibility="collapsed"
-                )
-                # Formatear como entero si es entero
-                if val_izq_num == int(val_izq_num):
-                    val_izq = str(int(val_izq_num))
-                else:
-                    val_izq = str(val_izq_num)
+                val_izq = valor_str
             else:
                 val_izq = '-inf'
         
@@ -305,28 +293,15 @@ with st.form("my_form"):
                 key=f"tder_{i}"
             )
             if tipo_der == 'número':
-                val_der_num = st.number_input(
-                    "Valor der:",
-                    value=0.0,
-                    step=0.5,
-                    format="%.2f",
-                    key=f"vder_{i}",
-                    label_visibility="collapsed"
-                )
-                # Formatear como entero si es entero
-                if val_der_num == int(val_der_num):
-                    val_der = str(int(val_der_num))
-                else:
-                    val_der = str(val_der_num)
+                val_der = valor_str
             else:
                 val_der = 'inf'
         
         with col_n4:
             paren_der = st.selectbox(
-                ")",
+                "Paréntesis/Corchete derecho:",
                 options=[')', ']'],
-                key=f"pd_{i}",
-                label_visibility="collapsed"
+                key=f"pd_{i}"
             )
         
         notacion_est = f"{paren_izq}{val_izq}, {val_der}{paren_der}"
