@@ -10,9 +10,6 @@ if "mat" in st.session_state:
 else:
     st.switch_page("streamlit_app.py")
 
-if mat == '102626' or mat == '112233':
-    st.warning("Te lo voy a permitir, pero, es lo mismo que antes...")
-
 #st.write(st.session_state.tema)
 new_seed = random.randint(1, 10000)
 
