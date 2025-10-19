@@ -73,24 +73,37 @@ def disable_button():
 preguntas = []
 respuestas = []
 
-# Función para normalizar respuestas de texto (eliminar espacios)
+# Función para normalizar respuestas de texto (eliminar espacios y manejar símbolos)
 def normalizar(texto):
+    # Reemplazar variaciones de infinito por símbolo estándar
+    texto = texto.replace("inf", "∞").replace("-inf", "-∞")
     return texto.replace(" ", "").lower()
 
 for i in range(5):
-    # Generar coeficientes aleatorios
+    # Generar coeficientes aleatorios que aseguren resultados enteros
     # ax + b [op] cx + d
+    # Para asegurar resultado entero, hacemos que (a-c) divida a (d-b)
+    
+    # Primero elegimos el resultado final (entero)
+    resultado_x = random.randint(-10, 10)
+    
+    # Elegimos coeficiente de x después de simplificar
+    coef_final = random.choice([-3, -2, -1, 1, 2, 3])
+    
+    # Ahora calculamos para que al resolver nos dé el resultado deseado
+    # (a-c)x = d-b => x = (d-b)/(a-c)
+    # Queremos que x = resultado_x
+    # Entonces: resultado_x = (d-b)/coef_final
+    # Por lo tanto: d-b = resultado_x * coef_final
+    
     a = random.randint(-5, 5)
     if a == 0:
         a = random.choice([-1, 1])
     
+    c = a - coef_final  # Así (a-c) = coef_final
+    
     b = random.randint(-10, 10)
-    
-    c = random.randint(-5, 5)
-    if c == 0 or c == a:  # Evitar que sean iguales
-        c = a + random.choice([-2, -1, 1, 2])
-    
-    d = random.randint(-10, 10)
+    d = b + (resultado_x * coef_final)  # Así (d-b) = resultado_x * coef_final
     
     # Operador de desigualdad
     operador = random.choice(['<', '>', '≤', '≥'])
@@ -189,13 +202,13 @@ for i in range(5):
         valor_x_str = str(valor_x)
     
     if operador_final == '<':
-        notacion = f"(-inf, {valor_x_str})"
+        notacion = f"(-∞, {valor_x_str})"
     elif operador_final == '≤':
-        notacion = f"(-inf, {valor_x_str}]"
+        notacion = f"(-∞, {valor_x_str}]"
     elif operador_final == '>':
-        notacion = f"({valor_x_str}, inf)"
+        notacion = f"({valor_x_str}, ∞)"
     else:  # ≥
-        notacion = f"[{valor_x_str}, inf)"
+        notacion = f"[{valor_x_str}, ∞)"
     
     # Almacenar pregunta y respuestas
     preguntas.append(desigualdad_original)
@@ -251,21 +264,25 @@ with st.form("my_form"):
         with col_g1:
             tipo_punto_est = st.selectbox(
                 "Tipo de punto:",
-                options=['abierto', 'cerrado'],
+                options=['○ abierto', '● cerrado'],
                 key=f"punto_{i}"
             )
+            # Extraer solo la palabra para la comparación
+            tipo_punto_clean = 'abierto' if 'abierto' in tipo_punto_est else 'cerrado'
         with col_g2:
             direccion_est = st.selectbox(
                 "Dirección de la flecha:",
-                options=['izquierda', 'derecha'],
+                options=['← izquierda', '→ derecha'],
                 key=f"dir_{i}"
             )
+            # Extraer solo la palabra para la comparación
+            direccion_clean = 'izquierda' if 'izquierda' in direccion_est else 'derecha'
         
-        grafica_est = f"{tipo_punto_est}, {direccion_est}"
+        grafica_est = f"{tipo_punto_clean}, {direccion_clean}"
         
         # Sección de notación de intervalos
         st.write("**c) Notación de intervalos:**")
-        st.info("💡 Selecciona 'número' para usar el valor que ingresaste en la desigualdad resuelta")
+        st.info("💡 Selecciona 'constante' para usar el valor que ingresaste en la desigualdad resuelta")
         col_n1, col_n2, col_n3, col_n4 = st.columns([1, 2, 2, 1])
         
         with col_n1:
@@ -278,26 +295,26 @@ with st.form("my_form"):
         with col_n2:
             tipo_izq = st.selectbox(
                 "Extremo izquierdo:",
-                options=['-inf', 'constante'],
+                options=['-∞', 'constante'],
                 key=f"tizq_{i}",
                 help="'constante' usará automáticamente el valor que ingresaste en la desigualdad"
             )
-            if tipo_izq == 'número':
+            if tipo_izq == 'constante':
                 val_izq = valor_str
             else:
-                val_izq = '-inf'
+                val_izq = '-∞'
         
         with col_n3:
             tipo_der = st.selectbox(
                 "Extremo derecho:",
-                options=['constante', 'inf'],
+                options=['constante', '∞'],
                 key=f"tder_{i}",
                 help="'constante' usará automáticamente el valor que ingresaste en la desigualdad"
             )
-            if tipo_der == 'número':
+            if tipo_der == 'constante':
                 val_der = valor_str
             else:
-                val_der = 'inf'
+                val_der = '∞'
         
         with col_n4:
             paren_der = st.selectbox(
@@ -340,11 +357,11 @@ if logrado:
             # Mostrar qué partes estuvieron incorrectas
             errores = []
             if not des_correcta:
-                errores.append(f"**Desigualdad:** {respuesta_correcta['desigualdad']}")
+                errores.append(f"Desigualdad: {respuesta_correcta['desigualdad']}")
             if not graf_correcta:
-                errores.append(f"**Gráfica:** {respuesta_correcta['grafica']}")
+                errores.append(f"Gráfica: {respuesta_correcta['grafica']}")
             if not nota_correcta:
-                errores.append(f"**Notación:** {respuesta_correcta['notacion']}")
+                errores.append(f"Notación: {respuesta_correcta['notacion']}")
             
             mensaje_error = f"{i+1}. " + " | ".join(errores)
             st.warning(mensaje_error)
