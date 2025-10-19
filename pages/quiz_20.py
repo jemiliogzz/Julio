@@ -45,11 +45,11 @@ st.progress(total_actual / limite)
 if 'button_disabled' not in st.session_state:
     st.session_state.button_disabled = False
 
-if mat != '112233':
-    st.warning("⚠️ Página en mantenimiento.")
-    time.sleep(2)
-    st.session_state.button_disabled = False
-    st.switch_page("pages/inicio.py")
+# if mat != '112233':
+#     st.warning("⚠️ Página en mantenimiento.")
+#     time.sleep(2)
+#     st.session_state.button_disabled = False
+#     st.switch_page("pages/inicio.py")
 
 if total_actual >= limite:
     st.warning("⚠️ Ya alcanzaste el límite de puntos para este tema.")
