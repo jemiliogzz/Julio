@@ -47,6 +47,7 @@ if 'button_disabled' not in st.session_state:
 
 if mat != '112233':
     st.warning("⚠️ Página en mantenimiento.")
+    time.sleep(2)
     st.session_state.button_disabled = False
     st.switch_page("pages/inicio.py")
 
