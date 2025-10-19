@@ -374,7 +374,7 @@ if logrado:
 
     st.info("Obtuviste: " + str(int(pts * 1.7)) + " puntos extra por esta práctica!")
     
-    pts = int((pts * 0.7) + (pts * 0.3 * info[2]) + 0.1 + (pts * 1.7)
+    pts = int((pts * 0.7) + (pts * 0.3 * info[2]) + 0.1 + (pts * 1.7))
     std_ac = std_info[3] + pts 
     std_tot = std_info[4] + pts
     
