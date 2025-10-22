@@ -215,7 +215,8 @@ with st.form("my_form"):
     respuestas_estudiante = []
     
     for i in range(5):
-        st.write(f"**Desigualdad {i+1}:** {preguntas[i]}")
+        st.write(f"**Desigualdad {i+1}:**")
+        st.latex(preguntas[i])
         
         col1, col2, col3 = st.columns(3)
         with col1:
