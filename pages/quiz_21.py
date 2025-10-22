@@ -35,7 +35,7 @@ query_limite = f"""
     SELECT LIMITE FROM PRIMEROC.PUBLIC.SUBJECTS
     WHERE ID_TEMA = {st.session_state.tema}
 """
-limite = session.sql(query_limite).collect()[0]["LIMITE"]
+limite = session.sql(query_limite).collect()[0]["LIMITE"] * 2
 
 # Mostrar info al alumno
 st.write(f"Has acumulado {total_actual} puntos en este tema (límite {limite}).")
@@ -128,14 +128,16 @@ for i in range(5):
         # Agregar una operación aleatoria
         op_tipo = random.choice(["suma", "resta"])
         if op_tipo == "suma":
-            c = random.randint(1, 5)
-            a = a_final - c
-            b = b_final - c
-            pregunta = f"{a} \\leq x + {c} < {b}"
-        else:  # resta
+            # Para x + c: si queremos x ≥ a_final, entonces (a_final + c) ≤ x + c
             c = random.randint(1, 5)
             a = a_final + c
             b = b_final + c
+            pregunta = f"{a} \\leq x + {c} < {b}"
+        else:  # resta
+            # Para x - c: si queremos x ≥ a_final, entonces (a_final - c) ≤ x - c
+            c = random.randint(1, 5)
+            a = a_final - c
+            b = b_final - c
             pregunta = f"{a} \\leq x - {c} < {b}"
         
         # Par de desigualdades resuelto (con x despejada)
@@ -155,14 +157,16 @@ for i in range(5):
         # Agregar una operación aleatoria
         op_tipo = random.choice(["suma", "resta"])
         if op_tipo == "suma":
-            c = random.randint(1, 5)
-            a = a_final - c
-            b = b_final - c
-            pregunta = f"x + {c} \\leq {a} \\text{{ o }} x + {c} > {b}"
-        else:  # resta
+            # Para x + c: si queremos x ≤ a_final, entonces x + c ≤ (a_final + c)
             c = random.randint(1, 5)
             a = a_final + c
             b = b_final + c
+            pregunta = f"x + {c} \\leq {a} \\text{{ o }} x + {c} > {b}"
+        else:  # resta
+            # Para x - c: si queremos x ≤ a_final, entonces x - c ≤ (a_final - c)
+            c = random.randint(1, 5)
+            a = a_final - c
+            b = b_final - c
             pregunta = f"x - {c} \\leq {a} \\text{{ o }} x - {c} > {b}"
         
         # Par de desigualdades resuelto (con x despejada)
@@ -284,7 +288,7 @@ with st.form("my_form"):
         
         st.write("---")
 
-    logrado = st.form_submit_button('✅ Confirmar respuestas', on_click=disable_button, disabled=st.session_state.button_disabled)
+    logrado = st.form_submit_button('Confirmar respuestas', on_click=disable_button, disabled=st.session_state.button_disabled)
 
 #Reutilizable
 if logrado:
