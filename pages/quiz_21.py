@@ -132,14 +132,14 @@ for i in range(5):
             a = a_final - c
             b = b_final - c
             pregunta = f"{a} \\leq x + {c} < {b}"
-            resp_pares = f"x + {c} \\geq {a} \\text{{ y }} x + {c} < {b}"
         else:  # resta
             c = random.randint(1, 5)
             a = a_final + c
             b = b_final + c
             pregunta = f"{a} \\leq x - {c} < {b}"
-            resp_pares = f"x - {c} \\geq {a} \\text{{ y }} x - {c} < {b}"
         
+        # Par de desigualdades resuelto (con x despejada)
+        resp_pares = f"x \\geq {a_final} \\text{{ y }} x < {b_final}"
         resp_grafica = generar_grafica(tipo, a_final, b_final)
         resp_notacion = f"[{a_final}, {b_final})"
         
@@ -159,14 +159,14 @@ for i in range(5):
             a = a_final - c
             b = b_final - c
             pregunta = f"x + {c} \\leq {a} \\text{{ o }} x + {c} > {b}"
-            resp_pares = f"x + {c} \\leq {a} \\text{{ o }} x + {c} > {b}"
         else:  # resta
             c = random.randint(1, 5)
             a = a_final + c
             b = b_final + c
             pregunta = f"x - {c} \\leq {a} \\text{{ o }} x - {c} > {b}"
-            resp_pares = f"x - {c} \\leq {a} \\text{{ o }} x - {c} > {b}"
         
+        # Par de desigualdades resuelto (con x despejada)
+        resp_pares = f"x \\leq {a_final} \\text{{ o }} x > {b_final}"
         resp_grafica = generar_grafica(tipo, a_final, b_final)
         resp_notacion = f"(-\\infty, {a_final}] \\cup ({b_final}, \\infty)"
     
