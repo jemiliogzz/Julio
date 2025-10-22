@@ -68,9 +68,13 @@ def disable_button():
 preguntas = []
 respuestas = []
 
-# Función para normalizar respuestas de texto
-def normalizar(texto):
-    return texto.replace(" ", "").lower()
+def shuffle_without_alignment(correct_list):
+    """Baraja una lista sin que ningún elemento quede en su posición original"""
+    shuffled = list(range(len(correct_list)))
+    while True:
+        random.shuffle(shuffled)
+        if all(shuffled[i] != i for i in range(len(correct_list))):
+            return shuffled
 
 for i in range(5):
     # Generar desigualdad compuesta
@@ -81,8 +85,9 @@ for i in range(5):
         a = random.randint(-8, 5)
         b = a + random.randint(3, 8)
         
-        pregunta = f"{a} \\leq x < {b}"
+        pregunta = f"{a} ≤ x < {b}"
         resp_pares = f"x ≥ {a} y x < {b}"
+        resp_grafica = f"[{a} cerrado] a [{b} abierto]"
         resp_notacion = f"[{a}, {b})"
         
     else:  # tipo "o"
@@ -90,38 +95,68 @@ for i in range(5):
         a = random.randint(-5, 3)
         b = a + random.randint(4, 10)
         
-        pregunta = f"x \\leq {a} \\text{{ o }} x > {b}"
+        pregunta = f"x ≤ {a} o x > {b}"
         resp_pares = f"x ≤ {a} o x > {b}"
+        resp_grafica = f"←[{a} cerrado] y [{b} abierto]→"
         resp_notacion = f"(-∞, {a}] ∪ ({b}, ∞)"
     
     preguntas.append(pregunta)
     respuestas.append({
         'pares': resp_pares,
+        'grafica': resp_grafica,
         'notacion': resp_notacion
     })
 
+# Crear índices desordenados para cada columna
+indices_pares = shuffle_without_alignment([i for i in range(5)])
+indices_graficas = shuffle_without_alignment([i for i in range(5)])
+indices_notaciones = shuffle_without_alignment([i for i in range(5)])
+
+# Crear listas desordenadas
+pares_desordenados = [respuestas[indices_pares[i]]['pares'] for i in range(5)]
+graficas_desordenadas = [respuestas[indices_graficas[i]]['grafica'] for i in range(5)]
+notaciones_desordenadas = [respuestas[indices_notaciones[i]]['notacion'] for i in range(5)]
+
+# Mostrar las cuatro columnas
+st.write("**Observa las siguientes columnas y relaciona cada desigualdad con su par, gráfica y notación:**")
+st.write("---")
+
+cols = st.columns(4)
+headers = ["Desigualdad", "Pares de desigualdades", "Gráfica", "Notación"]
+for c, h in zip(cols, headers):
+    c.markdown(f"**{h}**")
+
+for i in range(5):
+    c1, c2, c3, c4 = st.columns(4)
+    c1.write(f"**{i+1}.** {preguntas[i]}")
+    c2.write(f"**{chr(65+i)}.** {pares_desordenados[i]}")
+    c3.write(f"**{chr(65+i)}.** {graficas_desordenadas[i]}")
+    c4.write(f"**{chr(65+i)}.** {notaciones_desordenadas[i]}")
+
+st.write("---")
+
 #Reutilizable
 with st.form("my_form"):
-    st.write("**Instrucciones:** Para cada desigualdad compuesta, escribe el par de desigualdades y la notación de intervalos.")
+    st.write("**Instrucciones:** Para cada desigualdad (1-5), indica qué letra (A-E) corresponde en cada columna.")
     st.write("---")
     
     respuestas_estudiante = []
     
     for i in range(5):
-        st.write(f"**Pregunta {i+1}:**")
-        st.latex(preguntas[i])
+        st.write(f"**Desigualdad {i+1}:** {preguntas[i]}")
         
-        st.write("**a) Par de desigualdades:**")
-        st.caption("Ejemplo: x ≥ -2 y x < 5  o bien  x ≤ 3 o x > 8")
-        pares_est = st.text_input(f"Ingresa el par de desigualdades:", key=f"pares_{i}")
-        
-        st.write("**b) Notación de intervalos:**")
-        st.caption("Ejemplo: [-2, 5)  o bien  (-∞, 3] ∪ (8, ∞)")
-        notacion_est = st.text_input(f"Ingresa la notación de intervalos:", key=f"notacion_{i}")
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            par_letra = st.selectbox(f"Par:", options=['A', 'B', 'C', 'D', 'E'], key=f"par_{i}")
+        with col2:
+            graf_letra = st.selectbox(f"Gráfica:", options=['A', 'B', 'C', 'D', 'E'], key=f"graf_{i}")
+        with col3:
+            not_letra = st.selectbox(f"Notación:", options=['A', 'B', 'C', 'D', 'E'], key=f"not_{i}")
         
         respuestas_estudiante.append({
-            'pares': pares_est,
-            'notacion': notacion_est
+            'par': ord(par_letra) - 65,  # Convertir A-E a 0-4
+            'grafica': ord(graf_letra) - 65,
+            'notacion': ord(not_letra) - 65
         })
         st.write("---")
 
@@ -132,26 +167,34 @@ if logrado:
     pts = 0
     
     for i in range(5):
-        respuesta_correcta = respuestas[i]
-        respuesta_est = respuestas_estudiante[i]
+        resp_est = respuestas_estudiante[i]
         
-        # Verificar ambas partes (normalizar para comparación)
-        pares_correctos = normalizar(respuesta_correcta['pares']) == normalizar(respuesta_est['pares'])
-        notacion_correcta = normalizar(respuesta_correcta['notacion']) == normalizar(respuesta_est['notacion'])
+        # Encontrar las posiciones correctas en las listas desordenadas
+        # Necesitamos saber en qué posición de las listas desordenadas está la respuesta correcta
+        pos_par_correcta = indices_pares.index(i)
+        pos_graf_correcta = indices_graficas.index(i)
+        pos_not_correcta = indices_notaciones.index(i)
         
-        # Si ambas partes son correctas, suma punto
-        if pares_correctos and notacion_correcta:
-            st.success(f"{i+1}. ¡Correcto!")
+        # Verificar si las respuestas son correctas
+        par_correcto = resp_est['par'] == pos_par_correcta
+        graf_correcta = resp_est['grafica'] == pos_graf_correcta
+        not_correcta = resp_est['notacion'] == pos_not_correcta
+        
+        # Si todas son correctas, suma punto
+        if par_correcto and graf_correcta and not_correcta:
+            st.success(f"{i+1}. ¡Correcto! Todas las correspondencias son correctas.")
             pts += 1
         else:
-            # Mostrar qué partes estuvieron incorrectas
+            # Mostrar las respuestas correctas
             errores = []
-            if not pares_correctos:
-                errores.append(f"Pares: {respuesta_correcta['pares']}")
-            if not notacion_correcta:
-                errores.append(f"Notación: {respuesta_correcta['notacion']}")
+            if not par_correcto:
+                errores.append(f"Par: {chr(65+pos_par_correcta)}")
+            if not graf_correcta:
+                errores.append(f"Gráfica: {chr(65+pos_graf_correcta)}")
+            if not not_correcta:
+                errores.append(f"Notación: {chr(65+pos_not_correcta)}")
             
-            mensaje_error = f"{i+1}. " + " | ".join(errores)
+            mensaje_error = f"{i+1}. Las respuestas correctas eran → " + " | ".join(errores)
             st.warning(mensaje_error)
         
         time.sleep(0.8)
