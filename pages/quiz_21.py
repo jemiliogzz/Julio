@@ -71,14 +71,14 @@ def disable_button():
 def generar_grafica(tipo, a, b):
     """Genera una gráfica de la desigualdad y la devuelve como imagen en bytes"""
     fig, ax = plt.subplots(figsize=(3, 1))
-    x = np.linspace(-8, 8, 400)
+    x = np.linspace(-10, 10, 400)
     y = np.zeros_like(x)
 
     # Fondo
     ax.axhline(0, color='black', linewidth=1)
     ax.set_yticks([])
-    ax.set_xlim(-8, 8)
-    ax.set_xticks(range(-8, 9))
+    ax.set_xlim(-10, 10)
+    ax.set_xticks(range(-10, 11))
     ax.grid(True, linestyle='--', alpha=0.4)
 
     if tipo == "y":
@@ -112,28 +112,63 @@ preguntas = []
 respuestas = []
 
 for i in range(5):
-    # Generar desigualdad compuesta
+    # Generar desigualdad compuesta con operación
     tipo = random.choice(["y", "o"])
     
     if tipo == "y":
-        # Desigualdad tipo: a ≤ x < b
-        a = random.randint(-8, 5)
-        b = a + random.randint(3, 8)
+        # Desigualdad tipo: a ≤ x + c < b
+        # Primero generamos los valores finales (no mayores a 8)
+        a_final = random.randint(-8, 3)
+        b_final = a_final + random.randint(3, 6)
         
-        pregunta = f"{a} ≤ x < {b}"
-        resp_pares = f"x ≥ {a} y x < {b}"
-        resp_grafica = generar_grafica(tipo, a, b)
-        resp_notacion = f"[{a}, {b})"
+        # Limitar b_final a máximo 8
+        if b_final > 8:
+            b_final = 8
+        
+        # Agregar una operación aleatoria
+        op_tipo = random.choice(["suma", "resta"])
+        if op_tipo == "suma":
+            c = random.randint(1, 5)
+            a = a_final - c
+            b = b_final - c
+            pregunta = f"{a} \\leq x + {c} < {b}"
+            resp_pares = f"x + {c} ≥ {a} y x + {c} < {b}"
+        else:  # resta
+            c = random.randint(1, 5)
+            a = a_final + c
+            b = b_final + c
+            pregunta = f"{a} \\leq x - {c} < {b}"
+            resp_pares = f"x - {c} ≥ {a} y x - {c} < {b}"
+        
+        resp_grafica = generar_grafica(tipo, a_final, b_final)
+        resp_notacion = f"[{a_final}, {b_final})"
         
     else:  # tipo "o"
-        # Desigualdad tipo: x ≤ a o x > b
-        a = random.randint(-5, 3)
-        b = a + random.randint(4, 10)
+        # Desigualdad tipo: x + c ≤ a o x - c > b
+        a_final = random.randint(-5, 2)
+        b_final = a_final + random.randint(4, 8)
         
-        pregunta = f"x ≤ {a} o x > {b}"
-        resp_pares = f"x ≤ {a} o x > {b}"
-        resp_grafica = generar_grafica(tipo, a, b)
-        resp_notacion = f"(-∞, {a}] ∪ ({b}, ∞)"
+        # Limitar b_final a máximo 8
+        if b_final > 8:
+            b_final = 8
+        
+        # Agregar una operación aleatoria
+        op_tipo = random.choice(["suma", "resta"])
+        if op_tipo == "suma":
+            c = random.randint(1, 5)
+            a = a_final - c
+            b = b_final - c
+            pregunta = f"x + {c} \\leq {a} \\text{{ o }} x + {c} > {b}"
+            resp_pares = f"x + {c} ≤ {a} o x + {c} > {b}"
+        else:  # resta
+            c = random.randint(1, 5)
+            a = a_final + c
+            b = b_final + c
+            pregunta = f"x - {c} \\leq {a} \\text{{ o }} x - {c} > {b}"
+            resp_pares = f"x - {c} ≤ {a} o x - {c} > {b}"
+        
+        resp_grafica = generar_grafica(tipo, a_final, b_final)
+        resp_notacion = f"(-∞, {a_final}] ∪ ({b_final}, ∞)"
     
     preguntas.append(pregunta)
     respuestas.append({
