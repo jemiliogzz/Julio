@@ -187,59 +187,104 @@ pares_desordenados = [respuestas[indices_pares[i]]['pares'] for i in range(5)]
 graficas_desordenadas = [respuestas[indices_graficas[i]]['grafica'] for i in range(5)]
 notaciones_desordenadas = [respuestas[indices_notaciones[i]]['notacion'] for i in range(5)]
 
-# Mostrar las cuatro columnas
-st.write("**Observa las siguientes columnas y relaciona cada desigualdad con su par, gráfica y notación:**")
-st.write("---")
+# Mostrar contenido de referencia en tabs
+st.write("**📚 Material de Referencia - Explora las opciones disponibles:**")
+st.info("💡 Navega por las pestañas para ver todas las desigualdades, pares, gráficas y notaciones disponibles.")
 
-cols = st.columns(4)
-headers = ["Desigualdad", "Pares de desigualdades", "Gráfica", "Notación"]
-for c, h in zip(cols, headers):
-    c.markdown(f"**{h}**")
+tab1, tab2, tab3, tab4 = st.tabs(["📝 Desigualdades", "🔗 Pares", "📊 Gráficas", "📐 Notación"])
 
-for i in range(5):
-    c1, c2, c3, c4 = st.columns(4)
-    with c1:
+with tab1:
+    st.write("**Desigualdades a resolver:**")
+    for i in range(5):
         st.write(f"**{i+1}.**")
         st.latex(preguntas[i])
-    with c2:
+        st.write("")
+
+with tab2:
+    st.write("**Pares de desigualdades disponibles:**")
+    for i in range(5):
         st.write(f"**{chr(65+i)}.**")
         st.latex(pares_desordenados[i])
-    with c3:
+        st.write("")
+
+with tab3:
+    st.write("**Gráficas disponibles:**")
+    for i in range(5):
         st.write(f"**{chr(65+i)}.**")
         st.image(graficas_desordenadas[i], use_container_width=True)
-    with c4:
+        st.write("")
+
+with tab4:
+    st.write("**Notaciones de intervalos disponibles:**")
+    for i in range(5):
         st.write(f"**{chr(65+i)}.**")
         st.latex(notaciones_desordenadas[i])
+        st.write("")
 
 st.write("---")
 
 #Reutilizable
 with st.form("my_form"):
-    st.write("**Instrucciones:** Para cada desigualdad (1-5), indica qué letra (A-E) corresponde en cada columna.")
+    st.write("**📝 Instrucciones:** Para cada desigualdad, selecciona la letra correcta de cada tipo de respuesta.")
     st.write("---")
     
     respuestas_estudiante = []
     
     for i in range(5):
-        st.write(f"**Desigualdad {i+1}:**")
+        st.subheader(f"Pregunta {i+1}")
+        st.write("**Resuelve la siguiente desigualdad compuesta:**")
         st.latex(preguntas[i])
+        st.write("")
         
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            par_letra = st.selectbox(f"Par:", options=['A', 'B', 'C', 'D', 'E'], key=f"par_{i}")
-        with col2:
-            graf_letra = st.selectbox(f"Gráfica:", options=['A', 'B', 'C', 'D', 'E'], key=f"graf_{i}")
-        with col3:
-            not_letra = st.selectbox(f"Notación:", options=['A', 'B', 'C', 'D', 'E'], key=f"not_{i}")
+        # Mostrar opciones de pares
+        st.write("**a) Selecciona el par de desigualdades correcto:**")
+        opciones_pares_display = []
+        for j in range(5):
+            opciones_pares_display.append(f"{chr(65+j)}")
+        
+        # Crear columnas para mostrar las opciones de pares
+        cols_pares = st.columns(5)
+        for j, col in enumerate(cols_pares):
+            with col:
+                st.write(f"**{chr(65+j)}:**")
+                st.latex(pares_desordenados[j])
+        
+        par_letra = st.radio("Selecciona tu respuesta:", opciones_pares_display, 
+                             key=f"par_{i}", horizontal=True, label_visibility="collapsed")
+        st.write("")
+        
+        # Mostrar opciones de gráficas
+        st.write("**b) Selecciona la gráfica correcta:**")
+        cols_graf = st.columns(5)
+        for j, col in enumerate(cols_graf):
+            with col:
+                st.write(f"**{chr(65+j)}:**")
+                st.image(graficas_desordenadas[j], use_container_width=True)
+        
+        graf_letra = st.radio("Selecciona tu respuesta:", opciones_pares_display, 
+                              key=f"graf_{i}", horizontal=True, label_visibility="collapsed")
+        st.write("")
+        
+        # Mostrar opciones de notación
+        st.write("**c) Selecciona la notación de intervalos correcta:**")
+        cols_not = st.columns(5)
+        for j, col in enumerate(cols_not):
+            with col:
+                st.write(f"**{chr(65+j)}:**")
+                st.latex(notaciones_desordenadas[j])
+        
+        not_letra = st.radio("Selecciona tu respuesta:", opciones_pares_display, 
+                             key=f"not_{i}", horizontal=True, label_visibility="collapsed")
         
         respuestas_estudiante.append({
             'par': ord(par_letra) - 65,  # Convertir A-E a 0-4
             'grafica': ord(graf_letra) - 65,
             'notacion': ord(not_letra) - 65
         })
+        
         st.write("---")
 
-    logrado = st.form_submit_button('Confirmar respuestas', on_click=disable_button, disabled=st.session_state.button_disabled)
+    logrado = st.form_submit_button('✅ Confirmar respuestas', on_click=disable_button, disabled=st.session_state.button_disabled)
 
 #Reutilizable
 if logrado:
