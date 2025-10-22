@@ -5,6 +5,9 @@ from datetime import datetime
 import time 
 from snowflake.snowpark.context import get_active_session
 from snowflake.snowpark.functions import col
+import matplotlib.pyplot as plt
+import numpy as np
+import io
 
 if "mat" in st.session_state:
     mat = st.session_state["mat"]
@@ -65,8 +68,37 @@ random.seed(st.session_state.s_seed)
 def disable_button():
     st.session_state.button_disabled = True
 
-preguntas = []
-respuestas = []
+def generar_grafica(tipo, a, b):
+    """Genera una gráfica de la desigualdad y la devuelve como imagen en bytes"""
+    fig, ax = plt.subplots(figsize=(3, 1))
+    x = np.linspace(-8, 8, 400)
+    y = np.zeros_like(x)
+
+    # Fondo
+    ax.axhline(0, color='black', linewidth=1)
+    ax.set_yticks([])
+    ax.set_xlim(-8, 8)
+    ax.set_xticks(range(-8, 9))
+    ax.grid(True, linestyle='--', alpha=0.4)
+
+    if tipo == "y":
+        ax.plot(x, y, 'lightgray')
+        ax.plot(x[(x >= a) & (x < b)], y[(x >= a) & (x < b)], color="blue", linewidth=3)
+        ax.plot([a], [0], marker='o', color='blue', fillstyle='none', markersize=8)
+        ax.plot([b], [0], marker='o', color='blue', markersize=8)
+    else:
+        ax.plot(x, y, 'lightgray')
+        ax.plot(x[(x <= a)], y[(x <= a)], color="blue", linewidth=3)
+        ax.plot(x[(x > b)], y[(x > b)], color="blue", linewidth=3)
+        ax.plot([a], [0], marker='o', color='blue', markersize=8)
+        ax.plot([b], [0], marker='o', color='blue', fillstyle='none', markersize=8)
+
+    buf = io.BytesIO()
+    plt.tight_layout()
+    plt.savefig(buf, format="png")
+    plt.close(fig)
+    buf.seek(0)
+    return buf
 
 def shuffle_without_alignment(correct_list):
     """Baraja una lista sin que ningún elemento quede en su posición original"""
@@ -75,6 +107,9 @@ def shuffle_without_alignment(correct_list):
         random.shuffle(shuffled)
         if all(shuffled[i] != i for i in range(len(correct_list))):
             return shuffled
+
+preguntas = []
+respuestas = []
 
 for i in range(5):
     # Generar desigualdad compuesta
@@ -87,7 +122,7 @@ for i in range(5):
         
         pregunta = f"{a} ≤ x < {b}"
         resp_pares = f"x ≥ {a} y x < {b}"
-        resp_grafica = f"[{a} cerrado] a [{b} abierto]"
+        resp_grafica = generar_grafica(tipo, a, b)
         resp_notacion = f"[{a}, {b})"
         
     else:  # tipo "o"
@@ -97,7 +132,7 @@ for i in range(5):
         
         pregunta = f"x ≤ {a} o x > {b}"
         resp_pares = f"x ≤ {a} o x > {b}"
-        resp_grafica = f"←[{a} cerrado] y [{b} abierto]→"
+        resp_grafica = generar_grafica(tipo, a, b)
         resp_notacion = f"(-∞, {a}] ∪ ({b}, ∞)"
     
     preguntas.append(pregunta)
@@ -130,7 +165,9 @@ for i in range(5):
     c1, c2, c3, c4 = st.columns(4)
     c1.write(f"**{i+1}.** {preguntas[i]}")
     c2.write(f"**{chr(65+i)}.** {pares_desordenados[i]}")
-    c3.write(f"**{chr(65+i)}.** {graficas_desordenadas[i]}")
+    with c3:
+        st.write(f"**{chr(65+i)}.**")
+        st.image(graficas_desordenadas[i], use_container_width=True)
     c4.write(f"**{chr(65+i)}.** {notaciones_desordenadas[i]}")
 
 st.write("---")
