@@ -132,13 +132,13 @@ for i in range(5):
             a = a_final - c
             b = b_final - c
             pregunta = f"{a} \\leq x + {c} < {b}"
-            resp_pares = f"x + {c} ≥ {a} y x + {c} < {b}"
+            resp_pares = f"x + {c} \\geq {a} \\text{{ y }} x + {c} < {b}"
         else:  # resta
             c = random.randint(1, 5)
             a = a_final + c
             b = b_final + c
             pregunta = f"{a} \\leq x - {c} < {b}"
-            resp_pares = f"x - {c} ≥ {a} y x - {c} < {b}"
+            resp_pares = f"x - {c} \\geq {a} \\text{{ y }} x - {c} < {b}"
         
         resp_grafica = generar_grafica(tipo, a_final, b_final)
         resp_notacion = f"[{a_final}, {b_final})"
@@ -159,16 +159,16 @@ for i in range(5):
             a = a_final - c
             b = b_final - c
             pregunta = f"x + {c} \\leq {a} \\text{{ o }} x + {c} > {b}"
-            resp_pares = f"x + {c} ≤ {a} o x + {c} > {b}"
+            resp_pares = f"x + {c} \\leq {a} \\text{{ o }} x + {c} > {b}"
         else:  # resta
             c = random.randint(1, 5)
             a = a_final + c
             b = b_final + c
             pregunta = f"x - {c} \\leq {a} \\text{{ o }} x - {c} > {b}"
-            resp_pares = f"x - {c} ≤ {a} o x - {c} > {b}"
+            resp_pares = f"x - {c} \\leq {a} \\text{{ o }} x - {c} > {b}"
         
         resp_grafica = generar_grafica(tipo, a_final, b_final)
-        resp_notacion = f"(-∞, {a_final}] ∪ ({b_final}, ∞)"
+        resp_notacion = f"(-\\infty, {a_final}] \\cup ({b_final}, \\infty)"
     
     preguntas.append(pregunta)
     respuestas.append({
@@ -201,11 +201,15 @@ for i in range(5):
     with c1:
         st.write(f"**{i+1}.**")
         st.latex(preguntas[i])
-    c2.write(f"**{chr(65+i)}.** {pares_desordenados[i]}")
+    with c2:
+        st.write(f"**{chr(65+i)}.**")
+        st.latex(pares_desordenados[i])
     with c3:
         st.write(f"**{chr(65+i)}.**")
         st.image(graficas_desordenadas[i], use_container_width=True)
-    c4.write(f"**{chr(65+i)}.** {notaciones_desordenadas[i]}")
+    with c4:
+        st.write(f"**{chr(65+i)}.**")
+        st.latex(notaciones_desordenadas[i])
 
 st.write("---")
 
