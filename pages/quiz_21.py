@@ -198,7 +198,9 @@ for c, h in zip(cols, headers):
 
 for i in range(5):
     c1, c2, c3, c4 = st.columns(4)
-    c1.write(f"**{i+1}.** {preguntas[i]}")
+    with c1:
+        st.write(f"**{i+1}.**")
+        st.latex(preguntas[i])
     c2.write(f"**{chr(65+i)}.** {pares_desordenados[i]}")
     with c3:
         st.write(f"**{chr(65+i)}.**")
