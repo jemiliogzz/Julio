@@ -170,13 +170,14 @@ if logrado:
             st.warning(f"❌ Ejercicio {i+1}: Era {letra_correcta_result} ({e['ley']})")
         time.sleep(0.8)
 
+    pts_extra = 0
     if pts == 5:
         st.write(f"Felicidades por contestar todo bien. Obtienes", info[2], "punto(s) adicional.")
-        pts += info[2]
+        pts_extra += info[2]
     
-    st.info("Obtuviste: " + str(int(pts * 1.2)) + " puntos extra por esta práctica!")
+    st.info("Obtuviste: " + str(int(pts * 1.6)) + " puntos extra por esta práctica!")
     
-    pts = int((pts * 0.7) + (pts * 0.3 * info[2]) + 0.1 + (pts * 1.2))
+    pts = int((pts * 0.7) + (pts * 0.3 * info[2]) + 0.1 + (pts * 1.6) + pts_extra)
     std_ac = std_info[3] + pts 
     std_tot = std_info[4] + pts
     
