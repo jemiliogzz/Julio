@@ -66,13 +66,13 @@ def disable_button():
 
 bases = ['a', 'b', 'x', 'y']
 leyes = [
-    ("a^m * a^n = a^(m+n)", "Producto de potencias de igual base"),
-    ("(a^m)^n = a^(m*n)", "Potencia de una potencia"),
-    ("(ab)^n = a^n * b^n", "Potencia de un producto"),
-    ("(a/b)^n = a^n / b^n", "Potencia de un cociente"),
-    ("a^m / a^n = a^(m-n)", "Cociente de potencias de igual base"),
-    ("a^-n = 1/a^n", "Exponente negativo"),
-    ("a^0 = 1", "Exponente cero"),
+    ("a^m * a^n = a^(m+n)", "Multiplicando bases iguales"),
+    ("(a^m)^n = a^(m*n)", "Una potencia elevada a una potencia"),
+    ("(ab)^n = a^n * b^n", "El producto de una potencia"),
+    ("(a/b)^n = a^n / b^n", "El cociente de una potencia"),
+    ("a^m / a^n = a^(m-n)", "Dividiendo bases iguales"),
+    ("a^-n = 1/a^n", "Definición de un exponente negativo"),
+    ("a^0 = 1", "Definición de un exponente cero"),
 ]
 
 # Seleccionamos 5 leyes al azar
@@ -117,7 +117,7 @@ resultados_mezclados = random.sample([e["resultado"] for e in ejercicios], len(e
 leyes_mezcladas = random.sample([e["ley"] for e in ejercicios], len(ejercicios))
 
 # --- Mostrar formulario ---
-st.write("### 🧠 Une la expresión con su resultado y la ley correspondiente")
+st.write("Une la expresión con su resultado y la descripción correspondiente")
 
 #Reutilizable
 with st.form("my_form"):
@@ -142,7 +142,7 @@ with st.form("my_form"):
         st.write("")
         
         # Mostrar opciones de leyes
-        st.write("**b) Selecciona la ley correspondiente:**")
+        st.write("**b) Selecciona la descripción correspondiente:**")
         l_sel = st.selectbox(f"Ley {i+1}", leyes_mezcladas, key=f"ley_{i}")
         
         # Store the index of the selected result (0-4)
