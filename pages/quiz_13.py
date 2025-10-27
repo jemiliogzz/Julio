@@ -147,13 +147,14 @@ if logrado:
         
         time.sleep(0.8)
 
+    pts_extra = 0
     if pts == 5:
         st.write(f"Felicidades por contestar todo bien. Obtienes", info[2], "punto(s) adicional.")
-        pts += info[2]
+        pts_extra += info[2]
     
-    st.info("Obtuviste: " + str(int(pts * 1.4)) + " puntos extra por esta práctica!")
+    st.info("Obtuviste: " + str(int(pts * 0.4)) + " puntos extra por esta práctica!")
     
-    pts = int((pts * 0.7) + (pts * 0.3 * info[2]) + 0.1 + (pts * 1.4)) #1 - 6, 1 - 8, 1 - 11, 1 - 13, 2 - 16   
+    pts = int((pts * 0.7) + (pts * 0.3 * info[2]) + 0.1 + (pts * 0.4)) + pts_extra #1 - 6, 1 - 8, 1 - 11, 1 - 13, 2 - 16   
     std_ac = std_info[3] + pts 
     std_tot = std_info[4] + pts
     std_id = std_info[0]
