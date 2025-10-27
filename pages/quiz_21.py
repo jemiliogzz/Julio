@@ -35,7 +35,7 @@ query_limite = f"""
     SELECT LIMITE FROM PRIMEROC.PUBLIC.SUBJECTS
     WHERE ID_TEMA = {st.session_state.tema}
 """
-limite = session.sql(query_limite).collect()[0]["LIMITE"] * 2
+limite = session.sql(query_limite).collect()[0]["LIMITE"]
 
 # Mostrar info al alumno
 st.write(f"Has acumulado {total_actual} puntos en este tema (límite {limite}).")
@@ -331,9 +331,7 @@ if logrado:
         st.write(f"Felicidades por contestar todo bien. Obtienes", info[2], "punto(s) adicional.")
         pts += info[2]
     
-    st.info("Obtuviste: " + str(int(pts * 1.7)) + " puntos extra por esta práctica!")
-    
-    pts = int((pts * 0.7) + (pts * 0.3 * info[2]) + 0.1 + (pts * 1.7))
+    pts = int((pts * 0.7) + (pts * 0.3 * info[2]) + 0.1)
     std_ac = std_info[3] + pts 
     std_tot = std_info[4] + pts
     

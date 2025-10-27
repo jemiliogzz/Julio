@@ -85,25 +85,25 @@ for ley, nombre in seleccionadas:
     n = random.randint(1, 5)
 
     if "m+n" in ley:
-        expr = f"{base}^{m} * {base}^{n}"
-        res = f"{base}^{m+n}"
+        expr = f"{base}^{{{m}}} \\cdot {base}^{{{n}}}"
+        res = f"{base}^{{{m+n}}}"
     elif "m*n" in ley:
-        expr = f"({base}^{m})^{n}"
-        res = f"{base}^{m*n}"
+        expr = f"({base}^{{{m}}})^{{{n}}}"
+        res = f"{base}^{{{m*n}}}"
     elif "(ab)" in ley:
-        expr = f"({bases[0]}{bases[1]})^{n}"
-        res = f"{bases[0]}^{n} * {bases[1]}^{n}"
+        expr = f"({bases[0]}{bases[1]})^{{{n}}}"
+        res = f"{bases[0]}^{{{n}}} \\cdot {bases[1]}^{{{n}}}"
     elif "(a/b)" in ley:
-        expr = f"({bases[0]}/{bases[1]})^{n}"
-        res = f"{bases[0]}^{n}/{bases[1]}^{n}"
+        expr = f"\\left(\\frac{{{bases[0]}}}{{{bases[1]}}}\\right)^{{{n}}}"
+        res = f"\\frac{{{bases[0]}^{{{n}}}}}{{{bases[1]}^{{{n}}}}}"
     elif "m-n" in ley:
-        expr = f"{base}^{m} / {base}^{n}"
-        res = f"{base}^{m-n}"
+        expr = f"\\frac{{{base}^{{{m}}}}}{{{base}^{{{n}}}}}"
+        res = f"{base}^{{{m-n}}}"
     elif "1/a^n" in ley:
-        expr = f"{base}^-{n}"
-        res = f"1/{base}^{n}"
+        expr = f"{base}^{{{-n}}}"
+        res = f"\\frac{{1}}{{{base}^{{{n}}}}}"
     elif "a^0" in ley:
-        expr = f"{base}^0"
+        expr = f"{base}^{{0}}"
         res = "1"
 
     ejercicios.append({
@@ -123,16 +123,31 @@ st.write("### 🧠 Une la expresión con su resultado y la ley correspondiente")
 with st.form("my_form"):
     respuestas = []
     for i, e in enumerate(ejercicios):
-        st.write(f"#### Ejercicio {i+1}")
+        st.subheader(f"Pregunta {i+1}")
+        st.write("**Resuelve la siguiente expresión:**")
         st.latex(e['expresion'])
-
-        col1, col2 = st.columns(2)
-        with col1:
-            r_sel = st.selectbox(f"Resultado {i+1}", resultados_mezclados, key=f"res_{i}")
-        with col2:
-            l_sel = st.selectbox(f"Ley {i+1}", leyes_mezcladas, key=f"ley_{i}")
-
-        respuestas.append((r_sel, l_sel))
+        st.write("")
+        
+        # Mostrar opciones de resultados en columnas
+        st.write("**a) Selecciona el resultado correcto:**")
+        cols_res = st.columns(5)
+        for j, col in enumerate(cols_res):
+            with col:
+                st.write(f"**{chr(65+j)}:**")
+                st.latex(resultados_mezclados[j])
+        
+        resultado_opciones = [f"{chr(65+j)}" for j in range(5)]
+        res_letra = st.radio("Selecciona tu respuesta:", resultado_opciones, 
+                             key=f"res_{i}", horizontal=True, label_visibility="collapsed")
+        st.write("")
+        
+        # Mostrar opciones de leyes
+        st.write("**b) Selecciona la ley correspondiente:**")
+        l_sel = st.selectbox(f"Ley {i+1}", leyes_mezcladas, key=f"ley_{i}")
+        
+        # Store the index of the selected result (0-4)
+        res_idx = ord(res_letra) - 65
+        respuestas.append((res_idx, l_sel))
         st.write("---")
 
     logrado = st.form_submit_button('Confirmar respuestas', on_click=disable_button, disabled=st.session_state.button_disabled)
@@ -141,13 +156,19 @@ with st.form("my_form"):
 if logrado:
     pts = 0
     for i, e in enumerate(ejercicios):
-        correcto = (respuestas[i][0] == e["resultado"]) and (respuestas[i][1] == e["ley"])
+        # Find the index of the correct result in the mixed results list
+        resultado_correcto_idx = resultados_mezclados.index(e["resultado"])
+        # Check if student selected the correct result index and the correct law
+        correcto = (respuestas[i][0] == resultado_correcto_idx) and (respuestas[i][1] == e["ley"])
+        
         if correcto:
             st.success(f"✅ Ejercicio {i+1}: Correcto ({e['ley']})")
             pts += 1
         else:
-            st.warning(f"❌ Ejercicio {i+1}: Era {e['resultado']} – {e['ley']}")
-        time.sleep(0.5)
+            # Find the correct letter for the result
+            letra_correcta_result = chr(65 + resultado_correcto_idx)
+            st.warning(f"❌ Ejercicio {i+1}: Era {letra_correcta_result} ({e['ley']})")
+        time.sleep(0.8)
 
     if pts == 5:
         st.write(f"Felicidades por contestar todo bien. Obtienes", info[2], "punto(s) adicional.")
