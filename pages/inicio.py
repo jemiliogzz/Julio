@@ -88,6 +88,14 @@ if tareas_activas:
             """
             session.sql(update_tarea_red).collect()
             premio10_obtenido = True
+        
+        # Agregar premio10 a belongings automáticamente
+        if premio10_id:
+            insert_belongings = f"""
+                INSERT INTO PRIMEROC.PUBLIC.BELONGINGS (ID_ESTUDIANTE, ID_PRODUCTO, REDIMIDO)
+                VALUES ({id_estudiante}, {premio10_id}, FALSE)
+            """
+            session.sql(insert_belongings).collect()
     
     if puntos_tema >= 20 and not premio20_obtenido:
         update_tarea_red = f"""
@@ -97,6 +105,14 @@ if tareas_activas:
         """
         session.sql(update_tarea_red).collect()
         premio20_obtenido = True
+        
+        # Agregar premio20 a belongings automáticamente
+        if premio20_id:
+            insert_belongings = f"""
+                INSERT INTO PRIMEROC.PUBLIC.BELONGINGS (ID_ESTUDIANTE, ID_PRODUCTO, REDIMIDO)
+                VALUES ({id_estudiante}, {premio20_id}, FALSE)
+            """
+            session.sql(insert_belongings).collect()
     
     if puntos_tema >= 30 and not premio30_obtenido:
         update_tarea_red = f"""
@@ -106,6 +122,14 @@ if tareas_activas:
         """
         session.sql(update_tarea_red).collect()
         premio30_obtenido = True
+        
+        # Agregar premio30 a belongings automáticamente
+        if premio30_id:
+            insert_belongings = f"""
+                INSERT INTO PRIMEROC.PUBLIC.BELONGINGS (ID_ESTUDIANTE, ID_PRODUCTO, REDIMIDO)
+                VALUES ({id_estudiante}, {premio30_id}, FALSE)
+            """
+            session.sql(insert_belongings).collect()
     
     # Mostrar mensaje de tarea pendiente
     if puntos_tema < 30:
