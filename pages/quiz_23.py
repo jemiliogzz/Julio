@@ -369,12 +369,12 @@ with st.form("my_form"):
         
         **Regla general:**
         
-        | Signo original | × o ÷ por -1 | Signo nuevo |
+        | Signo original | × o ÷ por (-1) | Signo nuevo |
         |----------------|--------------|-------------|
-        | **<** | × o ÷ por -1 | **>** |
-        | **>** | × o ÷ por -1 | **<** |
-        | **≤** | × o ÷ por -1 | **≥** |
-        | **≥** | × o ÷ por -1 | **≤** |
+        | **<** | × o ÷  (-1) | **>** |
+        | **>** | × o ÷  (-1) | **<** |
+        | **≤** | × o ÷  (-1) | **≥** |
+        | **≥** | × o ÷  (-1) | **≤** |
         """)
     
     st.write("**Selecciona la forma despejada correcta (y = mx + b):**")
