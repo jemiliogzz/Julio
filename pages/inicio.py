@@ -176,7 +176,7 @@ st.divider()
 # ------------------------------
 # SIMULACIÓN DE EXAMEN (Solo para matrícula 112233)
 # ------------------------------
-if mat == '112233':
+if mat == 112233:
     st.subheader("🎯 Simulación de Examen")
     st.write("Prepárate para tus exámenes con ejercicios personalizados de los temas que elijas.")
     
