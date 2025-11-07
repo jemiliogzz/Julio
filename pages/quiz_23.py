@@ -353,9 +353,9 @@ with st.form("my_form"):
     st.latex(desigualdad_info["desigualdad"])
     
     # Tooltip/info sobre la regla de cambio de signo
-    with st.expander("💡 ¿Sabías que...?", expanded=False):
+    with st.expander("💡¡Recuerda!", expanded=False):
         st.info("""
-        **¡Recuerda esta regla súper importante!** 🎯
+        **¡No olvides cambiar la desigualdad!** 
         
         Si multiplicas o divides por un número negativo, ¡tienes que voltear el signo!
         
@@ -363,8 +363,6 @@ with st.form("my_form"):
         - Si tienes **<** y divides por un número negativo, se convierte en **>**
         - Si tienes **>** y divides por un número negativo, se convierte en **<**
         - Lo mismo pasa con **≤** y **≥**
-        
-        ¡Es como darle la vuelta a un panqueque! 🥞
         """)
     
     st.write("**Selecciona la forma despejada correcta (y = mx + b):**")
