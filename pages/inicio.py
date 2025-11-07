@@ -176,8 +176,8 @@ st.divider()
 # ------------------------------
 # SIMULACIÓN DE EXAMEN
 # ------------------------------
-st.subheader("🎯 Simulación de Examen")
-st.write("Prepárate para tus exámenes con ejercicios personalizados de los temas que elijas.")
+st.subheader("📝 Simulación de Examen")
+st.write("Prepárate para el examen con los temas que elijas.")
 
 if st.button("Iniciar Simulación de Examen", type="primary", use_container_width=True):
     st.switch_page("pages/simulacion_examen.py")
