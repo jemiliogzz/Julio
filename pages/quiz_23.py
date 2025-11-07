@@ -69,13 +69,18 @@ def disable_button():
 
 # Generar una desigualdad lineal aleatoria
 def generar_desigualdad():
-    a = random.randint(-5, 5)
-    while a == 0:
-        a = random.randint(-5, 5)
-    b = random.randint(-5, 5)
-    while b == 0:
-        b = random.randint(-5, 5)
-    c = random.randint(-10, 10)
+    # Generar m y b_val como enteros primero para garantizar resultados enteros
+    m = random.randint(-4, 4)
+    while m == 0:
+        m = random.randint(-4, 4)
+    b_val = random.randint(-8, 8)
+    
+    # Elegir b (usualmente 1 o -1 para simplificar, pero también otros valores)
+    b = random.choice([-1, 1, -2, 2, -3, 3])
+    
+    # Calcular a y c para que m = -a/b y b_val = c/b sean enteros
+    a = -m * b
+    c = b_val * b
     
     operadores = ['<', '>', '≤', '≥']
     operador = random.choice(operadores)
@@ -105,36 +110,23 @@ def generar_desigualdad():
     # Si b > 0: y operador (c - ax)/b
     # Si b < 0: y operador_inverso (c - ax)/|b|
     
+    # Formatear m (siempre entero)
+    if m == 1:
+        term_m = "x"
+    elif m == -1:
+        term_m = "-x"
+    else:
+        term_m = f"{m}x"
+    
+    # Formatear b_val (siempre entero)
+    if b_val == 0:
+        term_b = ""
+    elif b_val > 0:
+        term_b = f" + {b_val}"
+    else:
+        term_b = f" - {abs(b_val)}"
+    
     if b > 0:
-        m = -a / b
-        b_val = c / b
-        # Formatear m correctamente
-        if abs(m - round(m)) < 0.01:  # Si es un número entero
-            m_str = str(int(round(m)))
-            if m_str == "1":
-                term_m = "x"
-            elif m_str == "-1":
-                term_m = "-x"
-            else:
-                term_m = f"{m_str}x"
-        else:
-            term_m = f"{m:.2f}x"
-        
-        # Formatear b_val correctamente
-        if abs(b_val - round(b_val)) < 0.01:  # Si es un número entero
-            b_str = int(round(b_val))
-            if b_str == 0:
-                term_b = ""
-            elif b_str > 0:
-                term_b = f" + {b_str}"
-            else:
-                term_b = f" - {abs(b_str)}"
-        else:
-            if b_val >= 0:
-                term_b = f" + {b_val:.2f}"
-            else:
-                term_b = f" - {abs(b_val):.2f}"
-        
         if operador == '<':
             despeje_correcto = f"y < {term_m}{term_b}"
             tipo_linea = "punteada"
@@ -152,35 +144,6 @@ def generar_desigualdad():
             tipo_linea = "continua"
             sombrear_arriba = True
     else:  # b < 0
-        m = -a / b
-        b_val = c / b
-        # Formatear m correctamente
-        if abs(m - round(m)) < 0.01:  # Si es un número entero
-            m_str = str(int(round(m)))
-            if m_str == "1":
-                term_m = "x"
-            elif m_str == "-1":
-                term_m = "-x"
-            else:
-                term_m = f"{m_str}x"
-        else:
-            term_m = f"{m:.2f}x"
-        
-        # Formatear b_val correctamente
-        if abs(b_val - round(b_val)) < 0.01:  # Si es un número entero
-            b_str = int(round(b_val))
-            if b_str == 0:
-                term_b = ""
-            elif b_str > 0:
-                term_b = f" + {b_str}"
-            else:
-                term_b = f" - {abs(b_str)}"
-        else:
-            if b_val >= 0:
-                term_b = f" + {b_val:.2f}"
-            else:
-                term_b = f" - {abs(b_val):.2f}"
-        
         if operador == '<':
             despeje_correcto = f"y > {term_m}{term_b}"
             tipo_linea = "punteada"
@@ -215,22 +178,39 @@ def generar_desigualdad():
 def generar_opciones_despeje(desigualdad_info):
     opciones = [desigualdad_info["despeje_correcto"]]
     
-    # Generar 4 opciones incorrectas
+    # Generar 4 opciones incorrectas (solo enteros)
     for _ in range(4):
-        m_incorrecto = desigualdad_info["m"] + random.uniform(-2, 2)
-        b_incorrecto = desigualdad_info["b_val"] + random.uniform(-3, 3)
+        m_incorrecto = desigualdad_info["m"] + random.randint(-3, 3)
+        while m_incorrecto == desigualdad_info["m"]:
+            m_incorrecto = desigualdad_info["m"] + random.randint(-3, 3)
+        if m_incorrecto == 0:
+            m_incorrecto = random.choice([-1, 1])
         
-        # Formatear b_incorrecto correctamente
-        if b_incorrecto >= 0:
-            term_b_inc = f" + {b_incorrecto:.2f}"
+        b_incorrecto = desigualdad_info["b_val"] + random.randint(-4, 4)
+        while b_incorrecto == desigualdad_info["b_val"]:
+            b_incorrecto = desigualdad_info["b_val"] + random.randint(-4, 4)
+        
+        # Formatear m_incorrecto
+        if m_incorrecto == 1:
+            term_m_inc = "x"
+        elif m_incorrecto == -1:
+            term_m_inc = "-x"
         else:
-            term_b_inc = f" - {abs(b_incorrecto):.2f}"
+            term_m_inc = f"{m_incorrecto}x"
+        
+        # Formatear b_incorrecto
+        if b_incorrecto == 0:
+            term_b_inc = ""
+        elif b_incorrecto > 0:
+            term_b_inc = f" + {b_incorrecto}"
+        else:
+            term_b_inc = f" - {abs(b_incorrecto)}"
         
         # Variar el operador también
         operadores_incorrectos = ['<', '>', '≤', '≥']
         operador_incorrecto = random.choice(operadores_incorrectos)
         
-        opcion_incorrecta = f"y {operador_incorrecto} {m_incorrecto:.2f}x{term_b_inc}"
+        opcion_incorrecta = f"y {operador_incorrecto} {term_m_inc}{term_b_inc}"
         opciones.append(opcion_incorrecta)
     
     random.shuffle(opciones)
@@ -261,11 +241,26 @@ def generar_grafica(m, b_val, tipo_linea, sombrear_arriba, es_correcta=False):
         ax.fill_between(x_fill, y_fill_bottom, y_fill_line, alpha=0.3, color='lightblue',
                        where=(y_fill_line >= -10))
     
+    # Formatear la etiqueta de la línea (solo enteros)
+    if m == 1:
+        m_label = "x"
+    elif m == -1:
+        m_label = "-x"
+    else:
+        m_label = f"{int(m)}x"
+    
+    if b_val == 0:
+        label = f"y = {m_label}"
+    elif b_val > 0:
+        label = f"y = {m_label} + {int(b_val)}"
+    else:
+        label = f"y = {m_label} - {abs(int(b_val))}"
+    
     # Dibujar la línea después del sombreado para que se vea encima
     if tipo_linea == "continua":
-        ax.plot(x, y_linea, 'b-', linewidth=2.5, label=f'y = {m:.2f}x + {b_val:.2f}')
+        ax.plot(x, y_linea, 'b-', linewidth=2.5, label=label)
     else:  # punteada
-        ax.plot(x, y_linea, 'b--', linewidth=2.5, dashes=(5, 5), label=f'y = {m:.2f}x + {b_val:.2f}')
+        ax.plot(x, y_linea, 'b--', linewidth=2.5, dashes=(5, 5), label=label)
     
     ax.set_xlim(-10, 10)
     ax.set_ylim(-10, 10)
@@ -305,7 +300,11 @@ def generar_graficas_incorrectas(desigualdad_info):
     })
     
     # Gráfica 3: Pendiente incorrecta
-    m_incorrecto = desigualdad_info["m"] + random.uniform(-1.5, 1.5)
+    m_incorrecto = desigualdad_info["m"] + random.randint(-2, 2)
+    while m_incorrecto == desigualdad_info["m"]:
+        m_incorrecto = desigualdad_info["m"] + random.randint(-2, 2)
+    if m_incorrecto == 0:
+        m_incorrecto = random.choice([-1, 1])
     graficas.append({
         "imagen": generar_grafica(m_incorrecto, desigualdad_info["b_val"], 
                                   desigualdad_info["tipo_linea"], desigualdad_info["sombrear_arriba"]),
@@ -313,7 +312,9 @@ def generar_graficas_incorrectas(desigualdad_info):
     })
     
     # Gráfica 4: Intersección incorrecta
-    b_incorrecto = desigualdad_info["b_val"] + random.uniform(-2, 2)
+    b_incorrecto = desigualdad_info["b_val"] + random.randint(-3, 3)
+    while b_incorrecto == desigualdad_info["b_val"]:
+        b_incorrecto = desigualdad_info["b_val"] + random.randint(-3, 3)
     graficas.append({
         "imagen": generar_grafica(desigualdad_info["m"], b_incorrecto, 
                                   desigualdad_info["tipo_linea"], desigualdad_info["sombrear_arriba"]),
