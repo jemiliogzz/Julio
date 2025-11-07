@@ -15,6 +15,17 @@ if "mat" not in st.session_state:
 
 mat = st.session_state["mat"]
 
+# Restricción de acceso: Solo matrícula 112233
+if mat != '112233':
+    st.title("🔒 Acceso Restringido")
+    st.error("⚠️ Esta funcionalidad está en fase de prueba.")
+    st.info("La Simulación de Examen estará disponible próximamente para todos los estudiantes.")
+    
+    if st.button("🏠 Volver a Inicio"):
+        st.switch_page("pages/inicio.py")
+    
+    st.stop()  # Detener ejecución del resto del código
+
 # Conexión a Snowflake
 cnx = st.connection("snowflake")
 session = cnx.session()

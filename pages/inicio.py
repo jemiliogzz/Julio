@@ -174,15 +174,16 @@ else:
 st.divider()
 
 # ------------------------------
-# SIMULACIÓN DE EXAMEN
+# SIMULACIÓN DE EXAMEN (Solo para matrícula 112233)
 # ------------------------------
-st.subheader("📝 Simulación de Examen")
-st.write("Prepárate para el examen con los temas que elijas.")
-
-if st.button("Iniciar Simulación de Examen", type="primary", use_container_width=True):
-    st.switch_page("pages/simulacion_examen.py")
-
-st.divider()
+if mat == '112233':
+    st.subheader("🎯 Simulación de Examen")
+    st.write("Prepárate para tus exámenes con ejercicios personalizados de los temas que elijas.")
+    
+    if st.button("Iniciar Simulación de Examen", type="primary", use_container_width=True):
+        st.switch_page("pages/simulacion_examen.py")
+    
+    st.divider()
 
 # ------------------------------
 # TEMAS
