@@ -174,6 +174,17 @@ else:
 st.divider()
 
 # ------------------------------
+# SIMULACIÓN DE EXAMEN
+# ------------------------------
+st.subheader("🎯 Simulación de Examen")
+st.write("Prepárate para tus exámenes con ejercicios personalizados de los temas que elijas.")
+
+if st.button("Iniciar Simulación de Examen", type="primary", use_container_width=True):
+    st.switch_page("pages/simulacion_examen.py")
+
+st.divider()
+
+# ------------------------------
 # TEMAS
 # ------------------------------
 temas = session.table("primeroc.public.subjects").select(col('nombre_tema'))
