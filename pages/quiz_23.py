@@ -247,6 +247,23 @@ def generar_grafica(m, b_val, tipo_linea, sombrear_arriba, es_correcta=False):
     else:  # punteada
         ax.plot(x, y_linea, 'b--', linewidth=2.5, dashes=(5, 5))
     
+    # Agregar puntos para x = -1, 0, 1
+    x_puntos = [-1, 0, 1]
+    y_puntos = [m * x_p + b_val for x_p in x_puntos]
+    
+    # Marcar los puntos con círculos rojos más grandes y visibles
+    ax.scatter(x_puntos, y_puntos, color='red', s=100, zorder=5, edgecolors='darkred', linewidths=2)
+    
+    # Agregar etiquetas a los puntos
+    for i, (x_p, y_p) in enumerate(zip(x_puntos, y_puntos)):
+        ax.annotate(f'({x_p}, {int(y_p)})', 
+                   xy=(x_p, y_p), 
+                   xytext=(5, 5), 
+                   textcoords='offset points',
+                   fontsize=9,
+                   bbox=dict(boxstyle='round,pad=0.3', facecolor='yellow', alpha=0.7),
+                   zorder=6)
+    
     ax.set_xlim(-10, 10)
     ax.set_ylim(-10, 10)
     ax.axhline(y=0, color='k', linewidth=0.8, zorder=0)
