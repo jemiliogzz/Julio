@@ -368,10 +368,13 @@ with st.form("my_form"):
         3. **y > -2 - x**  ← ¡El signo cambió de '<' a '>'!
         
         **Regla general:**
-        - Si tienes **<** y multiplicas/divides por negativo → se convierte en **>**
-        - Si tienes **>** y multiplicas/divides por negativo → se convierte en **<**
-        - Si tienes **≤** y multiplicas/divides por negativo → se convierte en **≥**
-        - Si tienes **≥** y multiplicas/divides por negativo → se convierte en **≤**
+        
+        | Signo original | × o ÷ por -1 | Signo nuevo |
+        |----------------|--------------|-------------|
+        | **<** | × o ÷ por -1 | **>** |
+        | **>** | × o ÷ por -1 | **<** |
+        | **≤** | × o ÷ por -1 | **≥** |
+        | **≥** | × o ÷ por -1 | **≤** |
         """)
     
     st.write("**Selecciona la forma despejada correcta (y = mx + b):**")
