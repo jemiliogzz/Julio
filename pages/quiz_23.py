@@ -357,7 +357,7 @@ with st.form("my_form"):
         st.info("""
         **¡No olvides cambiar la desigualdad!** 
         
-        Si multiplicas o divides por un número negativo, ¡tienes que voltear el signo!
+        Si multiplicas o divides por un número negativo, ¡tienes que voltear la desigualdad!
         
         Por ejemplo:
         - Si tienes **<** y divides por un número negativo, se convierte en **>**
