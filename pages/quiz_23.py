@@ -241,26 +241,11 @@ def generar_grafica(m, b_val, tipo_linea, sombrear_arriba, es_correcta=False):
         ax.fill_between(x_fill, y_fill_bottom, y_fill_line, alpha=0.3, color='lightblue',
                        where=(y_fill_line >= -10))
     
-    # Formatear la etiqueta de la línea (solo enteros)
-    if m == 1:
-        m_label = "x"
-    elif m == -1:
-        m_label = "-x"
-    else:
-        m_label = f"{int(m)}x"
-    
-    if b_val == 0:
-        label = f"y = {m_label}"
-    elif b_val > 0:
-        label = f"y = {m_label} + {int(b_val)}"
-    else:
-        label = f"y = {m_label} - {abs(int(b_val))}"
-    
     # Dibujar la línea después del sombreado para que se vea encima
     if tipo_linea == "continua":
-        ax.plot(x, y_linea, 'b-', linewidth=2.5, label=label)
+        ax.plot(x, y_linea, 'b-', linewidth=2.5)
     else:  # punteada
-        ax.plot(x, y_linea, 'b--', linewidth=2.5, dashes=(5, 5), label=label)
+        ax.plot(x, y_linea, 'b--', linewidth=2.5, dashes=(5, 5))
     
     ax.set_xlim(-10, 10)
     ax.set_ylim(-10, 10)
@@ -270,7 +255,6 @@ def generar_grafica(m, b_val, tipo_linea, sombrear_arriba, es_correcta=False):
     ax.set_xlabel('x', fontsize=12)
     ax.set_ylabel('y', fontsize=12)
     ax.set_title('Gráfica de la desigualdad', fontsize=14, fontweight='bold')
-    ax.legend(loc='best', fontsize=9)
     
     buf = BytesIO()
     plt.savefig(buf, format='png', dpi=100, bbox_inches='tight')
@@ -359,7 +343,25 @@ with st.form("my_form"):
     )
     
     st.write("---")
-    st.subheader("Paso 2: Tipo de línea")
+    st.subheader("Paso 2: Completar la tabla")
+    st.write("**Usando la forma despejada, completa la siguiente tabla calculando los valores de y:**")
+    
+    # Mostrar la tabla
+    st.markdown("""
+    | x | y |
+    |---|---|
+    | -1 |   |
+    | 0  |   |
+    | 1  |   |
+    """)
+    
+    # Campos de entrada para los valores de y
+    y_menos1 = st.number_input("Para x = -1, y =", value=None, step=1, key="y_menos1")
+    y_0 = st.number_input("Para x = 0, y =", value=None, step=1, key="y_0")
+    y_1 = st.number_input("Para x = 1, y =", value=None, step=1, key="y_1")
+    
+    st.write("---")
+    st.subheader("Paso 3: Tipo de línea")
     st.write("**¿Qué tipo de línea se debe usar?**")
     st.write("- **Línea continua** (para ≤ o ≥)")
     st.write("- **Línea punteada** (para < o >)")
@@ -371,7 +373,7 @@ with st.form("my_form"):
     )
     
     st.write("---")
-    st.subheader("Paso 3: Región a sombrear")
+    st.subheader("Paso 4: Región a sombrear")
     st.write("**¿Qué región se debe sombrear?**")
     
     region_seleccionada = st.radio(
@@ -381,7 +383,7 @@ with st.form("my_form"):
     )
     
     st.write("---")
-    st.subheader("Paso 4: Seleccionar la gráfica correcta")
+    st.subheader("Paso 5: Seleccionar la gráfica correcta")
     st.write("**Observa las siguientes gráficas y selecciona la que representa correctamente la desigualdad:**")
     
     # Mostrar gráficas en columnas (3 columnas, 2 filas)
@@ -423,6 +425,45 @@ if logrado:
         st.warning(f"❌ Paso 1: Despeje incorrecto. La respuesta correcta era: {desigualdad_info['despeje_correcto']}")
     time.sleep(0.8)
     
+    # Verificar tabla (calcular valores correctos de y)
+    m = desigualdad_info["m"]
+    b_val = desigualdad_info["b_val"]
+    y_correcto_menos1 = m * (-1) + b_val
+    y_correcto_0 = m * 0 + b_val
+    y_correcto_1 = m * 1 + b_val
+    
+    tabla_correcta = True
+    tabla_respuestas = []
+    
+    if y_menos1 is not None and int(y_menos1) == int(y_correcto_menos1):
+        tabla_respuestas.append(True)
+    else:
+        tabla_respuestas.append(False)
+        tabla_correcta = False
+    
+    if y_0 is not None and int(y_0) == int(y_correcto_0):
+        tabla_respuestas.append(True)
+    else:
+        tabla_respuestas.append(False)
+        tabla_correcta = False
+    
+    if y_1 is not None and int(y_1) == int(y_correcto_1):
+        tabla_respuestas.append(True)
+    else:
+        tabla_respuestas.append(False)
+        tabla_correcta = False
+    
+    if tabla_correcta:
+        st.success("✅ Paso 2: Tabla correcta")
+        respuestas_correctas += 1
+    else:
+        mensaje_tabla = f"❌ Paso 2: Tabla incorrecta. Los valores correctos eran: "
+        mensaje_tabla += f"x=-1 → y={int(y_correcto_menos1)}, "
+        mensaje_tabla += f"x=0 → y={int(y_correcto_0)}, "
+        mensaje_tabla += f"x=1 → y={int(y_correcto_1)}"
+        st.warning(mensaje_tabla)
+    time.sleep(0.8)
+    
     # Verificar tipo de línea
     tipo_linea_correcto = False
     if desigualdad_info["tipo_linea"] == "continua" and tipo_linea_seleccionado == "Línea continua":
@@ -431,10 +472,10 @@ if logrado:
         tipo_linea_correcto = True
     
     if tipo_linea_correcto:
-        st.success(f"✅ Paso 2: Tipo de línea correcto ({desigualdad_info['tipo_linea']})")
+        st.success(f"✅ Paso 3: Tipo de línea correcto ({desigualdad_info['tipo_linea']})")
         respuestas_correctas += 1
     else:
-        st.warning(f"❌ Paso 2: Tipo de línea incorrecto. La respuesta correcta era: Línea {desigualdad_info['tipo_linea']}")
+        st.warning(f"❌ Paso 3: Tipo de línea incorrecto. La respuesta correcta era: Línea {desigualdad_info['tipo_linea']}")
     time.sleep(0.8)
     
     # Verificar región
@@ -445,10 +486,10 @@ if logrado:
         region_correcta = True
     
     if region_correcta:
-        st.success(f"✅ Paso 3: Región correcta ({'Arriba' if desigualdad_info['sombrear_arriba'] else 'Abajo'})")
+        st.success(f"✅ Paso 4: Región correcta ({'Arriba' if desigualdad_info['sombrear_arriba'] else 'Abajo'})")
         respuestas_correctas += 1
     else:
-        st.warning(f"❌ Paso 3: Región incorrecta. La respuesta correcta era: {'Arriba' if desigualdad_info['sombrear_arriba'] else 'Abajo'} de la línea")
+        st.warning(f"❌ Paso 4: Región incorrecta. La respuesta correcta era: {'Arriba' if desigualdad_info['sombrear_arriba'] else 'Abajo'} de la línea")
     time.sleep(0.8)
     
     # Verificar gráfica
@@ -456,17 +497,17 @@ if logrado:
     grafica_correcta = (indice_seleccionado == indice_grafica_correcta)
     
     if grafica_correcta:
-        st.success("✅ Paso 4: Gráfica correcta")
+        st.success("✅ Paso 5: Gráfica correcta")
         respuestas_correctas += 1
     else:
-        st.warning(f"❌ Paso 4: Gráfica incorrecta. La gráfica correcta era la Gráfica {indice_grafica_correcta + 1}")
+        st.warning(f"❌ Paso 5: Gráfica incorrecta. La gráfica correcta era la Gráfica {indice_grafica_correcta + 1}")
     time.sleep(0.8)
     
     # Calcular puntos
     pts = respuestas_correctas
     
     pts_extra = 0
-    if pts == 4:
+    if pts == 5:
         st.write(f"Felicidades por contestar todo bien. Obtienes", info[2], "punto(s) adicional.")
         pts_extra += info[2]
     
