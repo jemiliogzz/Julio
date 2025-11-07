@@ -359,10 +359,19 @@ with st.form("my_form"):
         
         Si multiplicas o divides por un número negativo, ¡tienes que voltear la desigualdad!
         
-        Por ejemplo:
-        - Si tienes **<** y divides por un número negativo, se convierte en **>**
-        - Si tienes **>** y divides por un número negativo, se convierte en **<**
-        - Lo mismo pasa con **≤** y **≥**
+        **Ejemplo paso a paso:**
+        
+        Si tienes: **-y < 2 + x**
+        
+        1. Para dejar la 'y' positiva, multiplica toda la desigualdad por **-1**
+        2. **-y × (-1) < (2 + x) × (-1)**
+        3. **y > -2 - x**  ← ¡El signo cambió de '<' a '>'!
+        
+        **Regla general:**
+        - Si tienes **<** y multiplicas/divides por negativo → se convierte en **>**
+        - Si tienes **>** y multiplicas/divides por negativo → se convierte en **<**
+        - Si tienes **≤** y multiplicas/divides por negativo → se convierte en **≥**
+        - Si tienes **≥** y multiplicas/divides por negativo → se convierte en **≤**
         """)
     
     st.write("**Selecciona la forma despejada correcta (y = mx + b):**")
