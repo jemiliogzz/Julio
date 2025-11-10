@@ -169,10 +169,13 @@ if logrado:
         if siguiente_tema is not None:
             if st.button("➡️ Continuar al siguiente tema", type="primary"):
                 if avanzar_siguiente_tema_examen():
-                    st.session_state.tema = siguiente_tema
+                    # Obtener el tema actual desde el índice (después de avanzar)
+                    idx_actual = st.session_state.exam_tema_actual_idx
+                    tema_actual = st.session_state.exam_temas[idx_actual]
+                    st.session_state.tema = tema_actual
                     st.session_state.s_seed = random.randint(1, 10000)
                     st.session_state.button_disabled = False
-                    st.rerun()
+                    st.switch_page(f"pages/quiz_{tema_actual}.py")
         else:
             # Terminó el examen, mostrar resumen
             st.success("✅ Has completado todos los temas del examen!")
