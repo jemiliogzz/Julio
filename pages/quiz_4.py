@@ -178,6 +178,7 @@ if logrado:
                     st.write(siguiente_tema)
                     ubi_quiz = f"pages/quiz_{siguiente_tema}.py"
                     st.write(ubi_quiz)
+                    time.sleep(10)
                     st.switch_page(ubi_quiz)
                 else:
                     # No hay más temas, ir al resumen
