@@ -64,7 +64,7 @@ if st.session_state.exam_state == 'selection':
             # Configurar modo examen
             st.session_state.exam_mode = True
             st.session_state.exam_temas = temas_seleccionados
-            st.session_state.exam_tema_actual_idx = -1  # Empezará en -1, el primer tema será 0
+            st.session_state.exam_tema_actual_idx = 0  # Empezar en 0 (primer tema)
             st.session_state.exam_resultados = []
             st.session_state.exam_state = 'in_progress'
             

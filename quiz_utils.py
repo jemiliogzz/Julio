@@ -37,7 +37,7 @@ def esta_en_modo_examen():
 def obtener_siguiente_tema_examen():
     """
     Obtiene el siguiente tema del examen si está en modo examen.
-    Nota: Retorna el tema en el índice actual + 1 (el siguiente después del actual).
+    Retorna el tema en el índice actual + 1 (el siguiente después del actual).
     
     Returns:
         int or None: ID del siguiente tema, o None si no hay más temas
@@ -49,7 +49,7 @@ def obtener_siguiente_tema_examen():
         return None
     
     if 'exam_tema_actual_idx' not in st.session_state:
-        st.session_state.exam_tema_actual_idx = -1
+        st.session_state.exam_tema_actual_idx = 0
     
     idx = st.session_state.exam_tema_actual_idx + 1  # Siguiente tema
     temas = st.session_state.exam_temas
@@ -60,21 +60,51 @@ def obtener_siguiente_tema_examen():
     return None
 
 
-def avanzar_siguiente_tema_examen():
+def obtener_tema_actual_examen():
     """
-    Avanza al siguiente tema del examen.
+    Obtiene el tema actual del examen basado en el índice.
     
     Returns:
-        bool: True si hay más temas, False si terminó el examen
+        int or None: ID del tema actual, o None si no está en modo examen
     """
     if not esta_en_modo_examen():
+        return None
+    
+    if 'exam_temas' not in st.session_state:
+        return None
+    
+    if 'exam_tema_actual_idx' not in st.session_state:
+        st.session_state.exam_tema_actual_idx = 0
+    
+    idx = st.session_state.exam_tema_actual_idx
+    temas = st.session_state.exam_temas
+    
+    if 0 <= idx < len(temas):
+        return temas[idx]
+    
+    return None
+
+
+def avanzar_siguiente_tema_examen():
+    """
+    Avanza al siguiente tema del examen incrementando el índice.
+    
+    Returns:
+        bool: True si hay más temas después de avanzar, False si terminó el examen
+    """
+    if not esta_en_modo_examen():
+        return False
+    
+    if 'exam_temas' not in st.session_state:
         return False
     
     if 'exam_tema_actual_idx' not in st.session_state:
         st.session_state.exam_tema_actual_idx = 0
     
+    # Avanzar al siguiente tema
     st.session_state.exam_tema_actual_idx += 1
     
+    # Verificar si hay más temas
     if st.session_state.exam_tema_actual_idx >= len(st.session_state.exam_temas):
         return False  # Terminó el examen
     

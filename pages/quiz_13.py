@@ -6,12 +6,23 @@ from snowflake.snowpark.context import get_active_session
 from snowflake.snowpark.functions import col
 import sys
 sys.path.append('..')
-from quiz_utils import obtener_cantidad_preguntas, esta_en_modo_examen, obtener_siguiente_tema_examen, avanzar_siguiente_tema_examen, registrar_resultado_examen
+from quiz_utils import obtener_cantidad_preguntas, esta_en_modo_examen, obtener_siguiente_tema_examen, avanzar_siguiente_tema_examen, registrar_resultado_examen, obtener_tema_actual_examen
 
 if "mat" in st.session_state:
     mat = st.session_state["mat"]
 else:
     st.switch_page("streamlit_app.py")
+
+# Verificar si necesitamos cambiar de tema automáticamente (modo examen)
+if esta_en_modo_examen() and 'exam_navegar_siguiente' in st.session_state and st.session_state.exam_navegar_siguiente:
+    st.session_state.exam_navegar_siguiente = False
+    tema_actual = obtener_tema_actual_examen()
+    if tema_actual is not None and tema_actual != st.session_state.tema:
+        st.session_state.tema = int(tema_actual)
+        st.session_state.s_seed = random.randint(1, 10000)
+        st.session_state.button_disabled = False
+        ubi_quiz = f"pages/quiz_{tema_actual}.py"
+        st.switch_page(ubi_quiz)
 
 # if mat != '112233':
 #     st.warning("ACTIVIDAD EN MANTENIMIENTO")
@@ -166,15 +177,15 @@ if logrado:
         # Botón para continuar al siguiente tema
         siguiente_tema = obtener_siguiente_tema_examen()
         if siguiente_tema is not None:
-            if st.button("➡️ Continuar al siguiente tema", type="primary"):
+            if st.button("➡️ Continuar al siguiente tema", type="primary", key="continuar_tema"):
+                # Avanzar al siguiente tema
                 if avanzar_siguiente_tema_examen():
-                    # Obtener el tema actual desde el índice (después de avanzar)
-                    idx_actual = st.session_state.exam_tema_actual_idx
-                    tema_actual = st.session_state.exam_temas[idx_actual]
-                    st.session_state.tema = tema_actual
-                    st.session_state.s_seed = random.randint(1, 10000)
-                    st.session_state.button_disabled = False
-                    st.switch_page(f"pages/quiz_{tema_actual}.py")
+                    # Marcar que necesitamos navegar al siguiente tema
+                    st.session_state.exam_navegar_siguiente = True
+                    st.rerun()
+                else:
+                    # Si no hay más temas, ir al resumen
+                    st.switch_page("pages/simulacion_examen.py")
         else:
             # Terminó el examen, mostrar resumen
             st.success("✅ Has completado todos los temas del examen!")
