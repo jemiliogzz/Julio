@@ -4,6 +4,9 @@ import random
 import time 
 from snowflake.snowpark.context import get_active_session
 from snowflake.snowpark.functions import col
+import sys
+sys.path.append('..')
+from quiz_utils import obtener_cantidad_preguntas, esta_en_modo_examen, obtener_siguiente_tema_examen, avanzar_siguiente_tema_examen, registrar_resultado_examen
 
 if "mat" in st.session_state:
     mat = st.session_state["mat"]
@@ -69,9 +72,10 @@ preguntas = []
 respuestas = []
 fracs = [x for x in range (4)]
 
-#prueba = r'\frac{5}{3} < \frac{1-r^{n}}{1-r}'
+# Obtener cantidad de preguntas (5 por defecto, 3 si es examen)
+cantidad_preguntas = obtener_cantidad_preguntas()
 
-for i in range (5):
+for i in range(cantidad_preguntas):
     #Fin
     operador = random.choice(['<', '<', '>', '>', '='])
     for j in range(4):
@@ -108,7 +112,7 @@ with st.form("my_form"):
     
     respuestas_estudiante = []
     
-    for i in range(5):
+    for i in range(cantidad_preguntas):
         st.write(f"**Pregunta {i+1}:**")
         st.latex(preguntas[i])
         res_est = st.radio(
@@ -126,7 +130,7 @@ with st.form("my_form"):
 if logrado:
     pts = 0
     
-    for i in range(5):
+    for i in range(cantidad_preguntas):
         if respuestas[i] == respuestas_estudiante[i]:
             st.success(f"{i+1}. Bravooo")
             pts += 1
@@ -137,34 +141,55 @@ if logrado:
         time.sleep(0.8)
 
     pts_extra = 0
-    if pts == 5:
+    if pts == cantidad_preguntas:
         st.write(f"Felicidades por contestar todo bien. Obtienes", info[2], "punto(s) adicional.")
         pts_extra += info[2]
     
-    pts = int((pts * 0.7) + (pts * 0.3 * info[2])) + pts_extra #1 - 6, 1 - 8, 1 - 11, 1 - 13, 2 - 16   
-    std_ac = std_info[3] + pts 
-    std_tot = std_info[4] + pts
-    std_id = std_info[0]
-    
-    st.write("En esta práctica, obtuviste: **" + str(pts) + "pts.**")
-    st.write("Puntos Actuales: " + str(std_ac) + "pts.")
-    st.write("Puntos Totales: " + str(std_tot) + "pts.")
-    
-    my_insert_stmt = """update students
-    set puntos_act = """ + str(std_ac) + """, puntos_tot = """ + str(std_tot) + """
-    WHERE matricula = """ + mat
-    session.sql(my_insert_stmt).collect()
+    # Si está en modo examen, registrar resultado pero NO guardar puntos en BD
+    if esta_en_modo_examen():
+        registrar_resultado_examen(st.session_state.tema, pts, cantidad_preguntas)
+        st.write(f"**Aciertos en este tema: {pts}/{cantidad_preguntas}**")
+        
+        # Botón para continuar al siguiente tema
+        siguiente_tema = obtener_siguiente_tema_examen()
+        if siguiente_tema is not None:
+            if st.button("➡️ Continuar al siguiente tema", type="primary"):
+                if avanzar_siguiente_tema_examen():
+                    st.session_state.tema = siguiente_tema
+                    st.session_state.s_seed = random.randint(1, 10000)
+                    st.session_state.button_disabled = False
+                    st.rerun()
+        else:
+            # Terminó el examen, mostrar resumen
+            st.success("✅ Has completado todos los temas del examen!")
+            if st.button("📊 Ver Resumen del Examen", type="primary"):
+                st.switch_page("pages/simulacion_examen.py")
+    else:
+        # Modo práctica normal: guardar puntos en BD
+        pts = int((pts * 0.7) + (pts * 0.3 * info[2])) + pts_extra #1 - 6, 1 - 8, 1 - 11, 1 - 13, 2 - 16   
+        std_ac = std_info[3] + pts 
+        std_tot = std_info[4] + pts
+        std_id = std_info[0]
+        
+        st.write("En esta práctica, obtuviste: **" + str(pts) + "pts.**")
+        st.write("Puntos Actuales: " + str(std_ac) + "pts.")
+        st.write("Puntos Totales: " + str(std_tot) + "pts.")
+        
+        my_insert_stmt = """update students
+        set puntos_act = """ + str(std_ac) + """, puntos_tot = """ + str(std_tot) + """
+        WHERE matricula = """ + mat
+        session.sql(my_insert_stmt).collect()
 
-    my_insert_stmt = insert_stmt = f"""
-    INSERT INTO PRIMEROC.PUBLIC.DONE_DONE_DONE VALUES
-    ({std_id}, '{st.session_state.tema}', {pts}, CURRENT_TIMESTAMP)
-    """
-    session.sql(my_insert_stmt).collect()
-
-regresar = st.button("Volver a inicio")
-if regresar:
-    st.session_state.s_seed = new_seed
-    st.session_state.button_disabled = False
-    st.switch_page("pages/inicio.py")
+        my_insert_stmt = insert_stmt = f"""
+        INSERT INTO PRIMEROC.PUBLIC.DONE_DONE_DONE VALUES
+        ({std_id}, '{st.session_state.tema}', {pts}, CURRENT_TIMESTAMP)
+        """
+        session.sql(my_insert_stmt).collect()
+        
+        regresar = st.button("Volver a inicio")
+        if regresar:
+            st.session_state.s_seed = new_seed
+            st.session_state.button_disabled = False
+            st.switch_page("pages/inicio.py")
 #Fin
     

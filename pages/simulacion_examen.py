@@ -1,13 +1,10 @@
 import streamlit as st
 import random
-import time
 from snowflake.snowpark.context import get_active_session
 from snowflake.snowpark.functions import col
-
-# Importar generadores desde módulo compartido
 import sys
-sys.path.append('..')  # Para poder importar desde la raíz del proyecto
-from quiz_generators import generar_pregunta, obtener_temas_disponibles
+sys.path.append('..')
+from quiz_utils import esta_en_modo_examen
 
 # Verificar autenticación
 if "mat" not in st.session_state:
@@ -24,34 +21,24 @@ if mat != '112233':
     if st.button("🏠 Volver a Inicio"):
         st.switch_page("pages/inicio.py")
     
-    st.stop()  # Detener ejecución del resto del código
+    st.stop()
 
 # Conexión a Snowflake
 cnx = st.connection("snowflake")
 session = cnx.session()
 
-# Obtener información del estudiante
-std_info = session.table("primeroc.public.students").filter(col('matricula') == mat).collect()[0]
-std_id = std_info[0]
-
-st.title("🎯 Simulación de Examen")
-st.write("Selecciona los temas que deseas practicar y genera un examen personalizado.")
-
 # Inicializar session state para el examen
 if 'exam_state' not in st.session_state:
-    st.session_state.exam_state = 'selection'  # Estados: selection, taking_exam, results
-if 'exam_questions' not in st.session_state:
-    st.session_state.exam_questions = []
-if 'current_question_idx' not in st.session_state:
-    st.session_state.current_question_idx = 0
-if 'exam_answers' not in st.session_state:
-    st.session_state.exam_answers = []
-if 'exam_seed' not in st.session_state:
-    st.session_state.exam_seed = random.randint(1, 10000)
+    st.session_state.exam_state = 'selection'  # Estados: selection, in_progress, results
+if 'exam_resultados' not in st.session_state:
+    st.session_state.exam_resultados = []
 
 # ==================== LÓGICA DE NAVEGACIÓN ====================
 
 if st.session_state.exam_state == 'selection':
+    st.title("🎯 Simulación de Examen")
+    st.write("Selecciona los temas que deseas practicar y genera un examen personalizado.")
+    
     st.subheader("Paso 1: Selección de Temas")
     
     # Obtener todos los temas excepto el 23
@@ -73,211 +60,138 @@ if st.session_state.exam_state == 'selection':
     st.write(f"**Total de preguntas:** {len(temas_seleccionados) * 3}")
     
     if st.button("Generar Examen", type="primary", disabled=len(temas_seleccionados) == 0):
-        # Generar preguntas
-        preguntas = []
-        base_seed = st.session_state.exam_seed
-        
-        for tema_id in temas_seleccionados:
-            # Obtener dificultad del tema
-            info_tema = session.table("primeroc.public.subjects") \
-                .filter(col('id_tema') == tema_id) \
-                .collect()[0]
-            dificultad = info_tema.DIFICULTAD
+        if len(temas_seleccionados) > 0:
+            # Configurar modo examen
+            st.session_state.exam_mode = True
+            st.session_state.exam_temas = temas_seleccionados
+            st.session_state.exam_tema_actual_idx = -1  # Empezará en -1, el primer tema será 0
+            st.session_state.exam_resultados = []
+            st.session_state.exam_state = 'in_progress'
             
-            # Generar 3 preguntas por tema usando el módulo compartido
-            for i in range(3):
-                seed = base_seed + tema_id * 1000 + i
-                pregunta = generar_pregunta(tema_id, seed, dificultad)
-                pregunta['tema_nombre'] = info_tema.NOMBRE_TEMA
-                preguntas.append(pregunta)
-        
-        # Mezclar preguntas
-        random.shuffle(preguntas)
-        
-        # Guardar en session state
-        st.session_state.exam_questions = preguntas
-        st.session_state.exam_answers = [None] * len(preguntas)
-        st.session_state.current_question_idx = 0
-        st.session_state.exam_state = 'taking_exam'
-        st.rerun()
-
-elif st.session_state.exam_state == 'taking_exam':
-    total_preguntas = len(st.session_state.exam_questions)
-    idx = st.session_state.current_question_idx
-    
-    # Barra de progreso
-    progress = (idx) / total_preguntas
-    st.progress(progress)
-    st.write(f"**Pregunta {idx + 1} de {total_preguntas}**")
-    
-    if idx < total_preguntas:
-        pregunta_actual = st.session_state.exam_questions[idx]
-        
-        st.write(f"**Tema:** {pregunta_actual['tema_nombre']}")
-        st.write("---")
-        
-        # Mostrar pregunta
-        st.latex(pregunta_actual['pregunta'])
-        
-        # Mostrar instrucciones adicionales si existen
-        if 'instruccion' in pregunta_actual:
-            st.info(pregunta_actual['instruccion'])
-        
-        # Campo de respuesta según el tipo
-        respuesta_usuario = None
-        
-        if pregunta_actual['tipo'] == 'texto':
-            respuesta_usuario = st.text_input(
-                "Tu respuesta:",
-                key=f"respuesta_{idx}",
-                value=st.session_state.exam_answers[idx] if st.session_state.exam_answers[idx] else ""
-            )
-        elif pregunta_actual['tipo'] == 'radio':
-            respuesta_anterior = st.session_state.exam_answers[idx]
-            index_default = None
-            if respuesta_anterior and respuesta_anterior in pregunta_actual['opciones']:
-                index_default = pregunta_actual['opciones'].index(respuesta_anterior)
+            # Ir al primer tema
+            primer_tema = temas_seleccionados[0]
+            st.session_state.tema = primer_tema
+            st.session_state.s_seed = random.randint(1, 10000)
+            st.session_state.button_disabled = False
             
-            respuesta_usuario = st.radio(
-                "Selecciona tu respuesta:",
-                pregunta_actual['opciones'],
-                index=index_default,
-                key=f"radio_{idx}"
-            )
-        elif pregunta_actual['tipo'] == 'slider':
-            rango = pregunta_actual.get('rango', (-10, 10))
-            valor_anterior = st.session_state.exam_answers[idx]
-            valor_default = int(valor_anterior) if valor_anterior and str(valor_anterior).replace('-','').isdigit() else 0
-            
-            respuesta_usuario = st.slider(
-                "Selecciona tu respuesta en la recta numérica:",
-                min_value=rango[0],
-                max_value=rango[1],
-                value=valor_default,
-                key=f"slider_{idx}"
-            )
-        
-        # Botones de navegación
-        col1, col2, col3 = st.columns([1, 1, 1])
-        
-        with col1:
-            if idx > 0:
-                if st.button("⬅️ Anterior"):
-                    st.session_state.exam_answers[idx] = respuesta_usuario
-                    st.session_state.current_question_idx -= 1
-                    st.rerun()
-        
-        with col2:
-            if st.button("💾 Guardar"):
-                st.session_state.exam_answers[idx] = respuesta_usuario
-                st.success("Respuesta guardada")
-                time.sleep(0.5)
-        
-        with col3:
-            if idx < total_preguntas - 1:
-                if st.button("Siguiente ➡️"):
-                    st.session_state.exam_answers[idx] = respuesta_usuario
-                    st.session_state.current_question_idx += 1
-                    st.rerun()
-            else:
-                if st.button("✅ Finalizar Examen", type="primary"):
-                    st.session_state.exam_answers[idx] = respuesta_usuario
-                    st.session_state.exam_state = 'results'
-                    st.rerun()
+            # Navegar al primer quiz
+            ubi_quiz = f"pages/quiz_{primer_tema}.py"
+            st.switch_page(ubi_quiz)
 
 elif st.session_state.exam_state == 'results':
-    st.subheader("📊 Resultados del Examen")
+    st.title("📊 Resultados del Examen")
     
-    total_preguntas = len(st.session_state.exam_questions)
-    aciertos = 0
-    errores = 0
-    
-    # Evaluar respuestas
-    resultados_detallados = []
-    for i, (pregunta, respuesta_usuario) in enumerate(zip(st.session_state.exam_questions, st.session_state.exam_answers)):
-        es_correcto = False
-        
-        if pregunta['tipo'] == 'texto':
-            # Normalizar respuestas (quitar espacios)
-            respuesta_normalizada = str(respuesta_usuario).replace(" ", "") if respuesta_usuario else ""
-            respuesta_correcta_normalizada = str(pregunta['respuesta_correcta']).replace(" ", "")
-            es_correcto = respuesta_normalizada == respuesta_correcta_normalizada
-        elif pregunta['tipo'] == 'radio':
-            es_correcto = respuesta_usuario == pregunta['respuesta_correcta']
-        elif pregunta['tipo'] == 'slider':
-            # Convertir ambos a int para comparar
-            try:
-                es_correcto = int(respuesta_usuario) == int(pregunta['respuesta_correcta'])
-            except (ValueError, TypeError):
-                es_correcto = False
-        
-        if es_correcto:
-            aciertos += 1
-        else:
-            errores += 1
-        
-        resultados_detallados.append({
-            'numero': i + 1,
-            'tema': pregunta['tema_nombre'],
-            'correcto': es_correcto,
-            'respuesta_usuario': respuesta_usuario,
-            'respuesta_correcta': pregunta['respuesta_correcta']
-        })
-    
-    porcentaje = (aciertos / total_preguntas * 100) if total_preguntas > 0 else 0
-    
-    # Mostrar resumen
-    col1, col2, col3, col4 = st.columns(4)
-    with col1:
-        st.metric("Total de Preguntas", total_preguntas)
-    with col2:
-        st.metric("Aciertos", aciertos, delta=f"{porcentaje:.1f}%")
-    with col3:
-        st.metric("Errores", errores)
-    with col4:
-        st.metric("Calificación", f"{porcentaje:.1f}%")
-    
-    # Barra de progreso visual
-    st.progress(aciertos / total_preguntas if total_preguntas > 0 else 0)
-    
-    # Mensaje de retroalimentación
-    if porcentaje >= 90:
-        st.success("🎉 ¡Excelente trabajo! Dominas estos temas.")
-    elif porcentaje >= 70:
-        st.info("👍 ¡Buen trabajo! Sigue practicando para mejorar.")
-    elif porcentaje >= 50:
-        st.warning("⚠️ Puedes mejorar. Revisa los temas con más cuidado.")
-    else:
-        st.error("📚 Necesitas repasar estos temas. ¡No te rindas!")
-    
-    # Mostrar detalles
-    with st.expander("📋 Ver detalles de cada pregunta"):
-        for resultado in resultados_detallados:
-            if resultado['correcto']:
-                st.success(f"✅ Pregunta {resultado['numero']} ({resultado['tema']}): Correcta")
-            else:
-                st.error(f"❌ Pregunta {resultado['numero']} ({resultado['tema']}): Incorrecta")
-                st.write(f"   Tu respuesta: {resultado['respuesta_usuario']}")
-                st.write(f"   Respuesta correcta: {resultado['respuesta_correcta']}")
-    
-    # Botones de acción
-    col1, col2 = st.columns(2)
-    with col1:
+    if not st.session_state.exam_resultados:
+        st.warning("No hay resultados para mostrar.")
         if st.button("🔄 Nuevo Examen"):
-            # Resetear estado
             st.session_state.exam_state = 'selection'
-            st.session_state.exam_questions = []
-            st.session_state.current_question_idx = 0
-            st.session_state.exam_answers = []
-            st.session_state.exam_seed = random.randint(1, 10000)
+            st.session_state.exam_mode = False
             st.rerun()
-    
-    with col2:
-        if st.button("🏠 Volver a Inicio"):
-            # Resetear estado
-            st.session_state.exam_state = 'selection'
-            st.session_state.exam_questions = []
-            st.session_state.current_question_idx = 0
-            st.session_state.exam_answers = []
-            st.session_state.exam_seed = random.randint(1, 10000)
-            st.switch_page("pages/inicio.py")
+    else:
+        # Calcular estadísticas totales
+        total_temas = len(st.session_state.exam_resultados)
+        total_preguntas = sum(r['total'] for r in st.session_state.exam_resultados)
+        total_aciertos = sum(r['aciertos'] for r in st.session_state.exam_resultados)
+        total_errores = sum(r['errores'] for r in st.session_state.exam_resultados)
+        porcentaje = (total_aciertos / total_preguntas * 100) if total_preguntas > 0 else 0
+        
+        # Mostrar resumen general
+        col1, col2, col3, col4 = st.columns(4)
+        with col1:
+            st.metric("Total de Temas", total_temas)
+        with col2:
+            st.metric("Total de Preguntas", total_preguntas)
+        with col3:
+            st.metric("Aciertos", total_aciertos, delta=f"{porcentaje:.1f}%")
+        with col4:
+            st.metric("Errores", total_errores)
+        
+        # Barra de progreso visual
+        st.progress(total_aciertos / total_preguntas if total_preguntas > 0 else 0)
+        
+        # Mensaje de retroalimentación
+        if porcentaje >= 90:
+            st.success("🎉 ¡Excelente trabajo! Dominas estos temas.")
+        elif porcentaje >= 70:
+            st.info("👍 ¡Buen trabajo! Sigue practicando para mejorar.")
+        elif porcentaje >= 50:
+            st.warning("⚠️ Puedes mejorar. Revisa los temas con más cuidado.")
+        else:
+            st.error("📚 Necesitas repasar estos temas. ¡No te rindas!")
+        
+        st.divider()
+        
+        # Mostrar resultados por tema
+        st.subheader("📋 Resultados por Tema")
+        
+        # Obtener nombres de temas desde BD
+        temas_dict = {}
+        for resultado in st.session_state.exam_resultados:
+            tema_id = resultado['tema_id']
+            if tema_id not in temas_dict:
+                tema_info = session.table("primeroc.public.subjects") \
+                    .filter(col('id_tema') == tema_id) \
+                    .select(col('nombre_tema')) \
+                    .collect()
+                if tema_info:
+                    temas_dict[tema_id] = tema_info[0].NOMBRE_TEMA
+        
+        # Mostrar cada tema
+        temas_con_errores = []
+        for resultado in st.session_state.exam_resultados:
+            tema_id = resultado['tema_id']
+            tema_nombre = temas_dict.get(tema_id, f"Tema {tema_id}")
+            aciertos = resultado['aciertos']
+            total = resultado['total']
+            errores = resultado['errores']
+            porcentaje_tema = (aciertos / total * 100) if total > 0 else 0
+            
+            # Colores según desempeño
+            if porcentaje_tema == 100:
+                st.success(f"✅ **{tema_nombre}**: {aciertos}/{total} ({porcentaje_tema:.0f}%)")
+            elif porcentaje_tema >= 70:
+                st.info(f"👍 **{tema_nombre}**: {aciertos}/{total} ({porcentaje_tema:.0f}%)")
+            elif porcentaje_tema >= 50:
+                st.warning(f"⚠️ **{tema_nombre}**: {aciertos}/{total} ({porcentaje_tema:.0f}%)")
+            else:
+                st.error(f"❌ **{tema_nombre}**: {aciertos}/{total} ({porcentaje_tema:.0f}%)")
+                temas_con_errores.append(tema_nombre)
+        
+        # Mostrar temas con errores
+        if temas_con_errores:
+            st.divider()
+            st.subheader("📚 Temas para Repasar")
+            st.write("Los siguientes temas requieren más práctica:")
+            for tema in temas_con_errores:
+                st.write(f"- {tema}")
+        
+        # Botones de acción
+        st.divider()
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("🔄 Nuevo Examen", type="primary", use_container_width=True):
+                # Resetear estado
+                st.session_state.exam_state = 'selection'
+                st.session_state.exam_mode = False
+                st.session_state.exam_resultados = []
+                st.session_state.exam_temas = []
+                st.session_state.exam_tema_actual_idx = -1
+                st.rerun()
+        
+        with col2:
+            if st.button("🏠 Volver a Inicio", use_container_width=True):
+                # Resetear estado
+                st.session_state.exam_state = 'selection'
+                st.session_state.exam_mode = False
+                st.session_state.exam_resultados = []
+                st.session_state.exam_temas = []
+                st.session_state.exam_tema_actual_idx = -1
+                st.switch_page("pages/inicio.py")
+
+else:
+    # Estado in_progress - esto no debería mostrarse, pero por si acaso
+    st.info("El examen está en progreso. Completa los temas para ver los resultados.")
+    if st.button("🏠 Volver a Inicio"):
+        st.session_state.exam_state = 'selection'
+        st.session_state.exam_mode = False
+        st.switch_page("pages/inicio.py")
