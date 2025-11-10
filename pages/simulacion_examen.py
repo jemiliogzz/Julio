@@ -63,12 +63,11 @@ if st.session_state.exam_state == 'selection':
         if len(temas_seleccionados) > 0:
             # Configurar modo examen
             st.session_state.exam_mode = True
-            st.session_state.exam_temas = temas_seleccionados
-            st.session_state.exam_tema_actual_idx = 0  # Empezar en 0 (primer tema)
+            st.session_state.exam_temas = temas_seleccionados.copy()  # Copia del arreglo
             st.session_state.exam_resultados = []
             st.session_state.exam_state = 'in_progress'
             
-            # Ir al primer tema
+            # Ir al primer tema (primer elemento del arreglo)
             primer_tema = temas_seleccionados[0]
             st.session_state.tema = primer_tema
             st.session_state.s_seed = random.randint(1, 10000)
@@ -175,7 +174,6 @@ elif st.session_state.exam_state == 'results':
                 st.session_state.exam_mode = False
                 st.session_state.exam_resultados = []
                 st.session_state.exam_temas = []
-                st.session_state.exam_tema_actual_idx = -1
                 st.rerun()
         
         with col2:
@@ -185,7 +183,6 @@ elif st.session_state.exam_state == 'results':
                 st.session_state.exam_mode = False
                 st.session_state.exam_resultados = []
                 st.session_state.exam_temas = []
-                st.session_state.exam_tema_actual_idx = -1
                 st.switch_page("pages/inicio.py")
 
 else:

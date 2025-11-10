@@ -161,22 +161,30 @@ if logrado:
         registrar_resultado_examen(st.session_state.tema, pts, cantidad_preguntas)
         st.write(f"**Aciertos en este tema: {pts}/{cantidad_preguntas}**")
         
-        # Botón para continuar al siguiente tema
-        siguiente_tema = obtener_siguiente_tema_examen()
-        if siguiente_tema is not None:
-            if st.button("➡️ Continuar al siguiente tema", type="primary"):
-                if avanzar_siguiente_tema_examen():
-                    # Obtener el tema actual desde el índice (después de avanzar)
-                    idx_actual = st.session_state.exam_tema_actual_idx
-                    tema_actual = st.session_state.exam_temas[idx_actual]
-                    st.session_state.tema = tema_actual
+        # Verificar si hay más temas (más de 1 elemento en el arreglo significa que hay un siguiente tema)
+        if 'exam_temas' in st.session_state and len(st.session_state.exam_temas) > 1:
+            # Hay más temas después del actual
+            if st.button("➡️ Continuar al siguiente tema", type="primary", key="continuar_tema"):
+                # Hacer pop del primer tema (tema actual) y obtener el siguiente
+                siguiente_tema = avanzar_siguiente_tema_examen()
+                if siguiente_tema is not None:
+                    # Hay más temas, redirigir al siguiente
+                    st.session_state.tema = int(siguiente_tema)
                     st.session_state.s_seed = random.randint(1, 10000)
                     st.session_state.button_disabled = False
-                    st.switch_page(f"pages/quiz_{tema_actual}.py")
+                    ubi_quiz = f"pages/quiz_{siguiente_tema}.py"
+                    st.switch_page(ubi_quiz)
+                else:
+                    # No hay más temas, ir al resumen
+                    st.session_state.exam_state = 'results'
+                    st.switch_page("pages/simulacion_examen.py")
         else:
-            # Terminó el examen, mostrar resumen
-            st.success("✅ Has completado todos los temas del examen!")
-            if st.button("📊 Ver Resumen del Examen", type="primary"):
+            # Este es el último tema, al completarlo ir al resumen
+            if st.button("📊 Ver Resumen del Examen", type="primary", key="ver_resumen"):
+                # Limpiar el arreglo (hacer pop del último tema)
+                if 'exam_temas' in st.session_state and len(st.session_state.exam_temas) > 0:
+                    st.session_state.exam_temas.pop(0)
+                st.session_state.exam_state = 'results'
                 st.switch_page("pages/simulacion_examen.py")
     else:
         # Modo práctica normal: guardar puntos en BD

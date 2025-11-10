@@ -36,8 +36,7 @@ def esta_en_modo_examen():
 
 def obtener_siguiente_tema_examen():
     """
-    Obtiene el siguiente tema del examen si está en modo examen.
-    Retorna el tema en el índice actual + 1 (el siguiente después del actual).
+    Obtiene el siguiente tema del examen (primer elemento del arreglo).
     
     Returns:
         int or None: ID del siguiente tema, o None si no hay más temas
@@ -48,67 +47,39 @@ def obtener_siguiente_tema_examen():
     if 'exam_temas' not in st.session_state:
         return None
     
-    if 'exam_tema_actual_idx' not in st.session_state:
-        st.session_state.exam_tema_actual_idx = 0
-    
-    idx = st.session_state.exam_tema_actual_idx + 1  # Siguiente tema
     temas = st.session_state.exam_temas
     
-    if idx < len(temas):
-        return temas[idx]
-    
-    return None
-
-
-def obtener_tema_actual_examen():
-    """
-    Obtiene el tema actual del examen basado en el índice.
-    
-    Returns:
-        int or None: ID del tema actual, o None si no está en modo examen
-    """
-    if not esta_en_modo_examen():
-        return None
-    
-    if 'exam_temas' not in st.session_state:
-        return None
-    
-    if 'exam_tema_actual_idx' not in st.session_state:
-        st.session_state.exam_tema_actual_idx = 0
-    
-    idx = st.session_state.exam_tema_actual_idx
-    temas = st.session_state.exam_temas
-    
-    if 0 <= idx < len(temas):
-        return temas[idx]
+    if len(temas) > 0:
+        return temas[0]  # Retornar el primer tema del arreglo
     
     return None
 
 
 def avanzar_siguiente_tema_examen():
     """
-    Avanza al siguiente tema del examen incrementando el índice.
+    Hace pop del primer tema del arreglo y retorna el siguiente tema.
     
     Returns:
-        bool: True si hay más temas después de avanzar, False si terminó el examen
+        int or None: ID del siguiente tema después de hacer pop, o None si no hay más temas
     """
     if not esta_en_modo_examen():
-        return False
+        return None
     
     if 'exam_temas' not in st.session_state:
-        return False
+        return None
     
-    if 'exam_tema_actual_idx' not in st.session_state:
-        st.session_state.exam_tema_actual_idx = 0
+    temas = st.session_state.exam_temas
     
-    # Avanzar al siguiente tema
-    st.session_state.exam_tema_actual_idx += 1
+    # Hacer pop del primer elemento
+    if len(temas) > 0:
+        temas.pop(0)  # Eliminar el primer tema del arreglo
+        st.session_state.exam_temas = temas  # Actualizar el arreglo
     
-    # Verificar si hay más temas
-    if st.session_state.exam_tema_actual_idx >= len(st.session_state.exam_temas):
-        return False  # Terminó el examen
+    # Retornar el siguiente tema (ahora el primero del arreglo)
+    if len(temas) > 0:
+        return temas[0]
     
-    return True  # Hay más temas
+    return None  # No hay más temas
 
 
 def registrar_resultado_examen(tema_id, aciertos, total_preguntas):
