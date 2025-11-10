@@ -175,7 +175,9 @@ if logrado:
                     st.session_state.tema = int(siguiente_tema)
                     st.session_state.s_seed = random.randint(1, 10000)
                     st.session_state.button_disabled = False
+                    st.write(siguiente_tema)
                     ubi_quiz = f"pages/quiz_{siguiente_tema}.py"
+                    st.write(ubi_quiz)
                     st.switch_page(ubi_quiz)
                 else:
                     # No hay más temas, ir al resumen
